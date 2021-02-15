@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import myBlog.api.response.PostResponse;
 import myBlog.dto.PostDto;
+import myBlog.dto.PostIdDto;
 import myBlog.model.Post;
 import myBlog.repository.PostRepository;
 
@@ -73,5 +74,32 @@ public class PostService {
     return postResponse;
   }
 
+  public PostResponse getPostsByDate(Pageable pageable, String date) {
+    String dayStart = date + " 00:00:00";
+    String dayEnd = date + " 23:59:59";
+    postResponse.setPosts(new ArrayList<>());
+
+    postRepository.getPostsByDate(dayStart, dayEnd, pageable).forEach(p -> {
+      postResponse.getPosts().add(PostDto.of(p));
+    });
+    postResponse.setCount(postResponse.getPosts().size());
+    return postResponse;
+  }
+
+  public PostResponse getPostsByTag(Pageable pageable, String query) {
+    String tag = query + "%";
+    postResponse.setPosts(new ArrayList<>());
+
+    postRepository.getPostsByTag(tag, pageable).forEach(p -> {
+      postResponse.getPosts().add(PostDto.of(postRepository.findById(p).get()));
+    });
+    postResponse.setCount(postResponse.getPosts().size());
+    return postResponse;
+  }
+
+  public PostIdDto getPostsById(int id) {
+
+    return PostIdDto.of(postRepository.findById(id).get());
+  }
 
 }

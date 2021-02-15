@@ -31,6 +31,18 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       nativeQuery = true)
   List<String> calendarPosts(String yearStart, String yearEnd);
 
+  @Query(value = "SELECT \n"
+      + "  * \n"
+      + "FROM \n"
+      + "  posts \n"
+      + "WHERE \n"
+      + "  publication_time BETWEEN ?1 \n"
+      + "  AND ?2 \n"
+      + "GROUP BY \n"
+      + "  id",
+      nativeQuery = true)
+  List<Post> getPostsByDate(String dayStart, String dayEnd, Pageable pageable);
+
 
   @Query(value = "SELECT * FROM posts WHERE concat(text,title) LIKE ?1",
       nativeQuery = true)
@@ -73,5 +85,15 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       nativeQuery = true)
   List<String> sortByCommentCount(Pageable pageable);
 
-
+  @Query(value = "SELECT \n"
+      + "  post_id \n"
+      + "FROM \n"
+      + "  blogdb.tag2post \n"
+      + "  join tags on tag2post.tag_id = tags.id \n"
+      + "where \n"
+      + "  name like ?1 \n"
+      + "group by \n"
+      + "  post_id",
+      nativeQuery = true)
+  List<Integer> getPostsByTag(String tag, Pageable pageable);
 }

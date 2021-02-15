@@ -56,7 +56,7 @@ public class Post {
   private int viewCount;
 
   @OneToMany(mappedBy = "post")
-  private List<Tag2Post> tagList;
+  private List<Tag2Post> tag2PostList;
 
   @OneToMany(mappedBy = "post")
   private List<PostComment> postCommentList;
