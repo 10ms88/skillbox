@@ -115,6 +115,7 @@ fabric.properties
 .idea/**/markdown-navigator.xml
 .idea/**/markdown-navigator/
 
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
@@ -145,4 +146,4 @@ $RECYCLE.BIN/
 
 .idea
 *.iml
-*.xml
+

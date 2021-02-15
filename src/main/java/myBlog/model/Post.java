@@ -1,13 +1,23 @@
 package myBlog.model;
 
 
-import lombok.Data;
-import myBlog.enumuration.ModerationStatus;
-import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import lombok.Data;
+import org.hibernate.annotations.Type;
+
+import myBlog.enumuration.ModerationStatus;
 
 
 @Entity
@@ -15,37 +25,44 @@ import java.util.List;
 @Data
 public class Post {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    @Column(nullable = false)
-    @Type(type = "byte")
-    private Boolean isActive;
+  @Column(nullable = false)
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private Boolean isActive;
 
+  @Column(columnDefinition = "enum('NEW','ACCEPTED','DECLINED')")
+  @Enumerated(EnumType.STRING)
+  private ModerationStatus moderationStatus;
 
-    @Type(type = "string")
-    private ModerationStatus moderationStatus;
+  @ManyToOne(cascade = CascadeType.ALL)
+  private User moderator;
 
+  @ManyToOne(cascade = CascadeType.ALL)
+  private User user;
 
-    private Integer moderatorId;
+  @Column(nullable = false)
+  private LocalDateTime publicationTime;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private User user;
+  @Column(nullable = false)
+  private String title;
 
-    @Column(nullable = false)
-    private LocalDateTime publicationTime;
+  @Column(nullable = false)
+  @Type(type = "text")
+  private String text;
 
-    @Column(nullable = false)
-    private String title;
+  private int viewCount;
 
-    @Column(nullable = false)
-    @Type(type = "text")
-    private String text;
+  @OneToMany(mappedBy = "post")
+  private List<Tag2Post> tagList;
 
-    private int viewCount;
+  @OneToMany(mappedBy = "post")
+  private List<PostComment> postCommentList;
 
-    @OneToMany(mappedBy = "tag")
-    private List<Tag2Post> tagList;
+  @OneToMany(mappedBy = "post")
+  private List<PostVote> postVoteList;
+
 
 }

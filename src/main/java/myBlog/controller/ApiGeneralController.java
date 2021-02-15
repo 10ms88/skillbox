@@ -1,34 +1,81 @@
 package myBlog.controller;
 
-import myBlog.api.response.InitResponse;
-import myBlog.api.response.SettingsResponse;
-import myBlog.service.SettingsService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import myBlog.api.response.CalendarResponse;
+import myBlog.api.response.InitResponse;
+import myBlog.api.response.PostResponse;
+import myBlog.api.response.TagResponse;
+import myBlog.dto.GlobalSettingsDto;
+import myBlog.service.CalendarService;
+import myBlog.service.PostService;
+import myBlog.service.SettingsService;
+import myBlog.service.TagService;
 
 @RestController
-@RequestMapping(path = "/api/", produces = "application/json; charset=utf-8")
+@RequestMapping(path = "/api/")
 public class ApiGeneralController {
 
-    private final SettingsService settingsService;
-    private final InitResponse initResponse;
-
-    public ApiGeneralController(SettingsService settingsService, InitResponse initResponse) {
-        this.settingsService = settingsService;
-        this.initResponse = initResponse;
-    }
+  private final SettingsService settingsService;
+  private final InitResponse initResponse;
+  private final PostService postService;
+  private final TagService tagService;
+  private final CalendarService calendarService;
 
 
-    @GetMapping("/settings")
-    private ResponseEntity<SettingsResponse> settingsResponse() {
-        return ResponseEntity.ok(settingsService.getGlobalSettings());
-    }
+  public ApiGeneralController(SettingsService settingsService,
+      InitResponse initResponse,
+      PostService postService,
+      TagService tagService,
+      CalendarService calendarService
+  ) {
+    this.settingsService = settingsService;
+    this.initResponse = initResponse;
+    this.postService = postService;
+    this.tagService = tagService;
+    this.calendarService = calendarService;
+  }
+
+  @GetMapping("/tag")
+  private ResponseEntity<TagResponse> tagResponseEntity(@RequestParam(defaultValue = "") String query) {
+    return ResponseEntity.ok(tagService.getTagList(query));
+  }
 
 
-    @GetMapping("/init")
-    private InitResponse init() {
+  @GetMapping("post")
+  private ResponseEntity<PostResponse> getSearchedPosts(
+      @RequestParam(required = false, defaultValue = "0") int offset,
+      @RequestParam(required = false, defaultValue = "10") int limit,
+      @RequestParam(required = false, defaultValue = "recent") String mode) {
 
-        return initResponse;
-    }
+    Pageable pageable = PageRequest.of(offset, limit);
+
+    return ResponseEntity.ok(postService.getFilteredPosts(pageable, mode));
+  }
+
+
+  @GetMapping("/settings")
+  private ResponseEntity<GlobalSettingsDto> settingsResponse() {
+    return ResponseEntity.ok(settingsService.getGlobalSettings());
+  }
+
+
+  @GetMapping("/init")
+  private ResponseEntity<InitResponse> init() {
+    return ResponseEntity.ok(initResponse);
+  }
+
+  @GetMapping("/calendar")
+  private ResponseEntity<CalendarResponse> getPostByYear(String year) {
+
+    return ResponseEntity.ok(calendarService.getPostByYear(year));
+  }
+
 
 }

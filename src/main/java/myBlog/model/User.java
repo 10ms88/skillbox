@@ -1,11 +1,15 @@
 package myBlog.model;
 
 
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
 
 
 @Entity
@@ -18,7 +22,7 @@ public class User {
     private int id;
 
     @Column(nullable = false)
-    @Type(type = "byte")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean isModerator;
 
     @Column(nullable = false)

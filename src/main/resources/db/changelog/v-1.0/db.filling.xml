@@ -1,0 +1,218 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+  <changeSet author="MIS (generated)" id="1612804340088-25">
+    <sql>
+      INSERT global_settings (code, name, value) VALUES ('MULTIUSER_MODE', 'Многопользовательский режим', 'YES'),
+      ('POST_PREMODERATION', 'Премодерация постов', 'YES'), ('STATISTICS_IS_PUBLIC', 'Показывать всем статистику
+      блога',
+      'YES')
+    </sql>
+  </changeSet>
+
+  <changeSet author="MIS (generated)" id="1612804340088-26">
+    <sql>
+      INSERT tags (name) VALUES ('sport'), ('travel'), ('economic'), ('politic'), ('criminal'), ('news')
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-27">
+    <sql>
+      INSERT users (code, email, is_moderator, name, password, photo, registration_time) VALUES (null,
+      'mmmsss.88@mail.ru', 1, 'Михаил', '1234qwer', null, '2020-10-23'), (null, 'mmmsss.99@mail.ru', 0, 'Виталий',
+      'qwer1234', null, '2020-11-23'), (null, 'mmmsss.77@mail.ru', 0, 'Николай', '1qaz2wsx', null, '2020-08-23')
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-28">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2021-02-08', 'Фадеев рассказал о своем опыте вакцинации, вспомнив, что в первый день
+      место
+      прививки слегка болело. Позднее появилась сонливость, которую, по словам продюсера, практически невозможно
+      было
+      контролировать. После второй прививки он не испытал никаких побочных эффектов', 'Максим Фадеев пожаловался
+      на
+      травлю после вакцинации от коронавируса', 0 , 3, 2)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-29">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES
+      (1, 'ACCEPTED', '2021-02-11', 'В ночь на 7 февраля в США состоялся турнир Абсолютного бойцовского чемпионата
+      (UFC), в главном бою которого бился россиянин Александр Волков. Противостоял отечественному тяжеловесу
+      легенда
+      Pride Алистар Оверим. В UFC голландца еще не били бойцы из России. Драго прервал эту традицию. Подробнее — в
+      материале «Ленты.ру». Специалист по русским Александр Волков — Алистар Оверим. Именно этот поединок должен
+      был
+      возглавить второй в истории российский турнир UFC. Ивент в Санкт-Петербурге прошел в апреле 2019-го. Увы,
+      отечественный тяжеловес снялся с боя из-за проблем со здоровьем. Спасать турнир тогда пригласили ветерана
+      Алексея
+      Олейника. Он дал Овериму яркий, но короткий бой. Нидерландский нокаутер уложил Удава в первом раунде.
+      Возвращение
+      Волкова к активным выступлениям вновь откладывалось. За время простоя россиянин подрастерял позиции в
+      дивизионе. В
+      ноябре 2019-го ему требовалось вновь заявить о себе. Снова отечественный ивент. Дополнительная
+      ответственность, но
+      зато при своих трибунах. На поединок с Волковым вышел Принц войны Грег Харди.
+      Драго противостоял оппонент явно не его уровня. Чувствовалось, что пауза в выступлениях была слишком долгой.
+      Волков не нагнетал, дрался осторожно, даже в чем-то скованно. Но бой забрал.
+      В следующий раз фанаты увидели Волкова только в июле 2020-го. Примечательно, что фамилия отечественного
+      бойца
+      впервые с марта 2018-го появилась в названии турнира. Напомним, тогда Драго нокаутировал бывшего чемпиона
+      UFC
+      Фабрисиу Вердума.', 'Русский Драго нокаутировал легенду UFC. Теперь он готов биться за титул',
+      1 , 1, 3)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-30">
+    <sql>
+      INSERT post_comments (comment_time, parent_id, text, post_id, user_id) VALUES (localtime(), null,
+      'Сool!!!!', 1,
+      1)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-31">
+    <sql>
+      INSERT post_votes (value, vote_time, post_id, user_id) VALUES (1, localtime(), 1, 2), (0, localtime(), 1,
+      1), (1, localtime(), 1, 3)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-32">
+    <sql>
+      INSERT tag2post (post_id, tag_id) VALUES (1, 1), (2, 1), (2, 6),(1, 3),(2, 5)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-33">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2005-02-08', 'В Госдуме отреагировали на публикацию в эфире турецкого
+      государственного телеканала TRT1 карту расширения зоны влияния Анкары, которая, в частности, включает в себя
+      российские Крым и Кубань. Об этом в пятницу, 12 февраля, сообщает РИА Новости.
+      В частности, первый заместитель председателя комитета нижней палаты парламента по обороне Андрей Красов
+      предположил, что у Анкары есть мысли о воссоздании Османской империи. По его оценке, Турция вряд ли станет
+      пробовать присоединить к себе российские территории силой.
+      «Если они хотят проверить на себе силу русского духа и нашего оружия, пусть попробуют», — сказал он, призвав
+      турецких чиновников внимательнее изучать историю России', 'В Госдуме оценили карту расширения влияния Турции
+      на Крым и Кубань', 15 , 3, 2)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-34">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2021-02-08', 'Фадеев рассказал о своем опыте вакцинации, вспомнив, что в первый день
+      место прививки слегка болело. Позднее появилась сонливость, которую, по словам продюсера, практически
+      невозможно
+      было контролировать. После второй прививки он не испытал никаких побочных эффектов', 'Максим Фадеев
+      пожаловался
+      на травлю после вакцинации от коронавируса', 0 , 3, 3)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-35">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2001-02-08', 'Позднее появилась сонливость, которую, по словам продюсера,
+      практически невозможно можно      было контролиро  было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививквать. П
+      было контролировать. После второй прививки он ', 'один', 100, 3, 3)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-36">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2002-02-08', 'Позднее появилась сонливость, которую, по словам продюсера,
+      практически невозможно можно      было контролиров  было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививкать. П
+      было контролировать. После второй прививки он ', 'два', 100, 3, 1)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-37">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2003-02-08', 'Позднее появилась сонливость, которую, по словам продюсера,
+      практически невозможно можно      было контролиров  было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививкать. П
+      было контролировать. После второй прививки он ', 'три', 50, 3, 1)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-38">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2004-02-08', 'Позднее появилась сонливость, которую, по словам продюсера,
+      практически невозможно можно      было контр  было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививколировать. П
+      было контролировать. После второй прививки он ', 'четыре', 50, 3, 1)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-39">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2005-02-08', 'Позднее появилась сонливость, которую, по словам продюсера,
+      практически невозможно можно      было контроли  было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививкровать. П
+      было контролировать. После второй прививки он ', 'пять', 50, 3, 1)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-40">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2006-06-08', 'Позднее появилась сонливость, которую, по словам продюсера,
+      практически невозможно можно      было контро  было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививклировать. П
+      было контролировать. После второй прививки он ', 'шесть', 50, 3, 1)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-41">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2007-02-08', 'Позднее появилась сонливость, которую, по словам продюсера,
+      практически невозможно можно      было контролир  было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививковать. П
+      было контролировать. После второй прививки он ', 'семь', 50, 3, 1)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-42">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2008-02-08', 'Позднее появилась сонливость, которую, по словам продюсера,
+      практически невозможно можно      было контрол  было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививкировать. П
+      было контролировать. После второй прививки он ', 'восемь', 50, 3, 1)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-43">
+    <sql>
+      INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
+      user_id)
+      VALUES (1, 'ACCEPTED', '2009-02-08', 'Позднее появилась сонливость, которую, по словам продюсера,
+      практически невозможно      было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививк  было контролировать. После второй прививки он ', 'девять', 50, 3, 1)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-44">
+    <sql>
+      INSERT post_votes (value, vote_time, post_id, user_id) VALUES (1, localtime(),13, 2), (1, localtime(),13, 2),(1,
+      localtime(),13, 2),(1, localtime(),13, 2),(1, localtime(),13, 2),(1, localtime(),13, 2),(1, localtime(),13, 2),(1,
+      localtime(),13, 2),(1, localtime(),13, 2),(1, localtime(),13, 2)
+    </sql>
+  </changeSet>
+  <changeSet author="MIS (generated)" id="1612804340088-45">
+    <sql>
+      INSERT post_votes (value, vote_time, post_id, user_id) VALUES (1, localtime(),8, 2),(1, localtime(),8, 2),(1,
+      localtime(),8, 2),(1, localtime(),8, 2),(1, localtime(),8, 2),(1, localtime(),8, 2),(1, localtime(),8, 2),(1,
+      localtime(),8, 2)
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>
+
+
+
+
+
+
