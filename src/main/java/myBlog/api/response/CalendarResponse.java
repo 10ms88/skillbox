@@ -8,5 +8,5 @@ import lombok.Data;
 public class CalendarResponse {
 
   private List<String> years;
-  private Map<String, String> posts;
+  private Map<String, Integer> posts;
 }

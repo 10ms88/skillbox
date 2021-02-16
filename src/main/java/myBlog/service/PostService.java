@@ -28,9 +28,7 @@ public class PostService {
     postResponse.setCount(foundPosts.size());
     List<PostDto> postDtoList = new ArrayList<>();
 
-    foundPosts.forEach(post -> {
-      postDtoList.add(PostDto.of(post));
-    });
+    foundPosts.forEach(post -> postDtoList.add(PostDto.of(post)));
     postResponse.setPosts(postDtoList);
     return postResponse;
   }
@@ -50,7 +48,7 @@ public class PostService {
         }
         break;
       case ("best"):
-        List<String> postsSortedByLikeCount = postRepository.sortByLikeCount(pageable);
+        List<String> postsSortedByLikeCount = postRepository.findPostsOrderByLikes(pageable);
         postDtoList = postsSortedByLikeCount
             .stream()
             .map(p -> p.split(","))
@@ -58,7 +56,7 @@ public class PostService {
             .collect(Collectors.toList());
         break;
       case ("popular"):
-        List<String> postsSortedByCommentCount = postRepository.sortByCommentCount(pageable);
+        List<String> postsSortedByCommentCount = postRepository.findPostsOrderByCommentCount(pageable);
         postDtoList = postsSortedByCommentCount
             .stream()
             .map(p -> p.split(","))
@@ -79,9 +77,7 @@ public class PostService {
     String dayEnd = date + " 23:59:59";
     postResponse.setPosts(new ArrayList<>());
 
-    postRepository.getPostsByDate(dayStart, dayEnd, pageable).forEach(p -> {
-      postResponse.getPosts().add(PostDto.of(p));
-    });
+    postRepository.getPostsByDate(dayStart, dayEnd, pageable).forEach(p -> postResponse.getPosts().add(PostDto.of(p)));
     postResponse.setCount(postResponse.getPosts().size());
     return postResponse;
   }
@@ -90,9 +86,7 @@ public class PostService {
     String tag = query + "%";
     postResponse.setPosts(new ArrayList<>());
 
-    postRepository.getPostsByTag(tag, pageable).forEach(p -> {
-      postResponse.getPosts().add(PostDto.of(postRepository.findById(p).get()));
-    });
+    postRepository.getPostsByTag(tag, pageable).forEach(p -> postResponse.getPosts().add(PostDto.of(postRepository.findById(p).get())));
     postResponse.setCount(postResponse.getPosts().size());
     return postResponse;
   }

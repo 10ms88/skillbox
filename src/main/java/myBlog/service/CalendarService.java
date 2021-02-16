@@ -25,7 +25,7 @@ public class CalendarService {
     List<String> s = postRepository.calendarPosts(yearStart, yearEnd);
     s.forEach(p -> {
       String[] split = p.split(",");
-      calendarResponse.getPosts().put(split[1], split[0]);
+      calendarResponse.getPosts().put(split[0], Integer.valueOf(split[1]));
     });
     return calendarResponse;
   }

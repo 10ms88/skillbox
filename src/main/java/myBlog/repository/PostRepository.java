@@ -21,25 +21,20 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
   List<String> calendarYears();
 
 
-  @Query(value = "SELECT count(*) AS cnt,"
-      + "date(publication_time) AS publication_time "
-      + "FROM posts "
-      + "WHERE publication_time "
-      + "BETWEEN ?1 "
-      + "AND ?2 "
+  @Query(value = "SELECT date(publication_time),\n"
+      + "       count(*)\n"
+      + "FROM posts\n"
+      + "WHERE is_active = 1\n"
+      + "  AND moderation_status = 'ACCEPTED'\n"
+      + "  AND publication_time BETWEEN ?1 AND ?2\n"
       + "GROUP BY publication_time",
       nativeQuery = true)
   List<String> calendarPosts(String yearStart, String yearEnd);
 
-  @Query(value = "SELECT \n"
-      + "  * \n"
-      + "FROM \n"
-      + "  posts \n"
-      + "WHERE \n"
-      + "  publication_time BETWEEN ?1 \n"
-      + "  AND ?2 \n"
-      + "GROUP BY \n"
-      + "  id",
+  @Query(value = "SELECT *\n"
+      + "FROM posts\n"
+      + "WHERE publication_time BETWEEN ?1 AND ?2\n"
+      + "GROUP BY id",
       nativeQuery = true)
   List<Post> getPostsByDate(String dayStart, String dayEnd, Pageable pageable);
 
@@ -49,51 +44,39 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
   List<Post> findAllBySearchQuery(String query, Pageable pageable);
 
 
-  @Query(value = "SELECT post_id,\n"
-      + "       sum(like_cnt) AS like_cnt\n"
-      + "FROM\n"
-      + "  (SELECT id AS post_id,\n"
-      + "          COUNT(id) - 1 AS like_cnt\n"
-      + "   FROM blogdb.posts\n"
-      + "   GROUP BY id\n"
-      + "   UNION ALL\n"
-      + "     (SELECT post_id,\n"
-      + "             count(value) AS like_cnt\n"
-      + "      FROM post_votes\n"
-      + "      WHERE value = 1\n"
-      + "      GROUP BY post_id)) AS asd\n"
-      + "GROUP BY post_id\n"
-      + "ORDER BY like_cnt DESC",
+  @Query(value = "SELECT p.*\n"
+      + "FROM posts p\n"
+      + "LEFT JOIN users u ON u.id = p.user_id\n"
+      + "LEFT JOIN post_comments pc ON pc.post_id = p.id\n"
+      + "LEFT JOIN post_votes pvl ON pvl.post_id = p.id AND pvl.value = 1\n"
+      + "WHERE p.is_active = 1\n"
+      + "  AND p.moderation_status = 'ACCEPTED'\n"
+      + "  AND p.publication_time <= current_date()\n"
+      + "GROUP BY p.id\n"
+      + "ORDER BY count(pvl.value) DESC",
       nativeQuery = true)
-  List<String> sortByLikeCount(Pageable pageable);
+  List<String> findPostsOrderByLikes(Pageable pageable);
 
 
-  @Query(value = "SELECT post_id,\n"
-      + "       sum(comment_cnt) AS comment_cnt\n"
-      + "FROM\n"
-      + "  (SELECT id AS post_id,\n"
-      + "          COUNT(id) - 1 AS comment_cnt\n"
-      + "   FROM blogdb.posts\n"
-      + "   GROUP BY id\n"
-      + "   UNION ALL\n"
-      + "     (SELECT post_id,\n"
-      + "             count(*) AS comment_cnt\n"
-      + "      FROM post_comments\n"
-      + "      GROUP BY post_id)) AS asd\n"
-      + "GROUP BY post_id\n"
-      + "ORDER BY comment_cnt DESC",
+  @Query(value = "SELECT p.*\n"
+      + "FROM posts p\n"
+      + "LEFT JOIN users u ON u.id = p.user_id\n"
+      + "LEFT JOIN post_comments pc ON pc.post_id = p.id\n"
+      + "LEFT JOIN post_votes pvl ON pvl.post_id = p.id AND pvl.value = 1\n"
+      + "WHERE p.is_active = 1\n"
+      + "  AND p.moderation_status = 'ACCEPTED'\n"
+      + "  AND p.publication_time <= current_date()\n"
+      + "GROUP BY p.id\n"
+      + "ORDER BY count(pc.id) DESC",
       nativeQuery = true)
-  List<String> sortByCommentCount(Pageable pageable);
+  List<String> findPostsOrderByCommentCount(Pageable pageable);
 
-  @Query(value = "SELECT \n"
-      + "  post_id \n"
-      + "FROM \n"
-      + "  blogdb.tag2post \n"
-      + "  join tags on tag2post.tag_id = tags.id \n"
-      + "where \n"
-      + "  name like ?1 \n"
-      + "group by \n"
-      + "  post_id",
+
+  @Query(value = "SELECT post_id\n"
+      + "FROM tag2post\n"
+      + "JOIN tags ON tag2post.tag_id = tags.id\n"
+      + "WHERE name like ?1\n"
+      + "GROUP BY post_id",
       nativeQuery = true)
   List<Integer> getPostsByTag(String tag, Pageable pageable);
 }
