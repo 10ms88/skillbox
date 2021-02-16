@@ -22,7 +22,7 @@ public class CalendarService {
     calendarResponse.setPosts(new HashMap<>());
     String yearStart = year + "-01-01 00:00:00";
     String yearEnd = year + "-12-31 23:59:59";
-    List<String> s = postRepository.calendarPosts(yearStart, yearEnd);
+    List<String> s = postRepository.findPostsByYear(yearStart, yearEnd);
     s.forEach(p -> {
       String[] split = p.split(",");
       calendarResponse.getPosts().put(split[0], Integer.valueOf(split[1]));

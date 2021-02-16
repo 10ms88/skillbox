@@ -3,6 +3,7 @@ package myBlog.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,6 +15,7 @@ import myBlog.dto.PostIdDto;
 import myBlog.model.Post;
 import myBlog.repository.PostRepository;
 
+@Slf4j
 @Service
 public class PostService {
 
@@ -24,12 +26,12 @@ public class PostService {
 
   public PostResponse getSearchedPosts(Pageable pageable, String query) {
 
-    List<Post> foundPosts = postRepository.findAllBySearchQuery(query, pageable);
-    postResponse.setCount(foundPosts.size());
-    List<PostDto> postDtoList = new ArrayList<>();
+    log.info(postRepository.findPostsBySearchQuery("%" + query + "%", pageable).getPageable().toString());
 
-    foundPosts.forEach(post -> postDtoList.add(PostDto.of(post)));
-    postResponse.setPosts(postDtoList);
+    postResponse.setPosts(postRepository.findPostsBySearchQuery("%" + query + "%", pageable)
+        .get()
+        .map(PostDto::of)
+        .collect(Collectors.toList()));
     return postResponse;
   }
 
@@ -48,22 +50,17 @@ public class PostService {
         }
         break;
       case ("best"):
-        List<String> postsSortedByLikeCount = postRepository.findPostsOrderByLikes(pageable);
-        postDtoList = postsSortedByLikeCount
-            .stream()
-            .map(p -> p.split(","))
-            .map(split -> PostDto.of(postRepository.findById(Integer.valueOf(split[0])).get()))
+        postDtoList = postRepository.findPostsOrderByLikes(pageable)
+            .get()
+            .map(PostDto::of)
             .collect(Collectors.toList());
         break;
       case ("popular"):
-        List<String> postsSortedByCommentCount = postRepository.findPostsOrderByCommentCount(pageable);
-        postDtoList = postsSortedByCommentCount
-            .stream()
-            .map(p -> p.split(","))
-            .map(split -> PostDto.of(postRepository.findById(Integer.valueOf(split[0])).get()))
+        postDtoList = postRepository.findPostsOrderByCommentCount(pageable)
+            .get()
+            .map(PostDto::of)
             .collect(Collectors.toList());
         break;
-
       default:
         throw new IllegalStateException("Unexpected value: " + mode);
     }
@@ -75,24 +72,23 @@ public class PostService {
   public PostResponse getPostsByDate(Pageable pageable, String date) {
     String dayStart = date + " 00:00:00";
     String dayEnd = date + " 23:59:59";
-    postResponse.setPosts(new ArrayList<>());
-
-    postRepository.getPostsByDate(dayStart, dayEnd, pageable).forEach(p -> postResponse.getPosts().add(PostDto.of(p)));
-    postResponse.setCount(postResponse.getPosts().size());
+    postResponse.setPosts(postRepository.findPostsByDate(dayStart, dayEnd, pageable)
+        .get()
+        .map(PostDto::of)
+        .collect(Collectors.toList()));
     return postResponse;
   }
 
   public PostResponse getPostsByTag(Pageable pageable, String query) {
     String tag = query + "%";
-    postResponse.setPosts(new ArrayList<>());
-
-    postRepository.getPostsByTag(tag, pageable).forEach(p -> postResponse.getPosts().add(PostDto.of(postRepository.findById(p).get())));
-    postResponse.setCount(postResponse.getPosts().size());
+    postResponse.setPosts(postRepository.findPostsByTag(tag, pageable)
+        .get()
+        .map(PostDto::of)
+        .collect(Collectors.toList()));
     return postResponse;
   }
 
   public PostIdDto getPostsById(int id) {
-
     return PostIdDto.of(postRepository.findById(id).get());
   }
 

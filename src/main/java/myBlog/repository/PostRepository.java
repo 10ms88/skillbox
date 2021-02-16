@@ -1,6 +1,7 @@
 package myBlog.repository;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,6 +16,8 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
   @Query(value = "SELECT EXTRACT(YEAR "
       + "FROM publication_time) AS year "
       + "FROM posts "
+      + "WHERE is_active = 1 AND moderation_status = 'ACCEPTED' "
+      + "AND publication_time <= current_date()"
       + "GROUP BY  year "
       + "ORDER BY  year asc",
       nativeQuery = true)
@@ -22,61 +25,64 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
 
 
   @Query(value = "SELECT date(publication_time),\n"
-      + "       count(*)\n"
+      + " count(*)\n"
       + "FROM posts\n"
       + "WHERE is_active = 1\n"
       + "  AND moderation_status = 'ACCEPTED'\n"
       + "  AND publication_time BETWEEN ?1 AND ?2\n"
       + "GROUP BY publication_time",
       nativeQuery = true)
-  List<String> calendarPosts(String yearStart, String yearEnd);
+  List<String> findPostsByYear(String yearStart, String yearEnd);
+
 
   @Query(value = "SELECT *\n"
       + "FROM posts\n"
       + "WHERE publication_time BETWEEN ?1 AND ?2\n"
+      + "AND is_active = 1 AND moderation_status = 'ACCEPTED' "
+      + "AND publication_time <= current_date()"
       + "GROUP BY id",
       nativeQuery = true)
-  List<Post> getPostsByDate(String dayStart, String dayEnd, Pageable pageable);
+  Page<Post> findPostsByDate(String dayStart, String dayEnd, Pageable pageable);
 
 
-  @Query(value = "SELECT * FROM posts WHERE concat(text,title) LIKE ?1",
+  @Query(value = "SELECT * FROM posts "
+      + "WHERE concat(text,title) LIKE ?1 "
+      + "AND is_active = 1 AND moderation_status = 'ACCEPTED' "
+      + "AND publication_time <= current_date()",
       nativeQuery = true)
-  List<Post> findAllBySearchQuery(String query, Pageable pageable);
+  Page<Post> findPostsBySearchQuery(String query, Pageable pageable);
 
-
-  @Query(value = "SELECT p.*\n"
-      + "FROM posts p\n"
-      + "LEFT JOIN users u ON u.id = p.user_id\n"
-      + "LEFT JOIN post_comments pc ON pc.post_id = p.id\n"
-      + "LEFT JOIN post_votes pvl ON pvl.post_id = p.id AND pvl.value = 1\n"
-      + "WHERE p.is_active = 1\n"
-      + "  AND p.moderation_status = 'ACCEPTED'\n"
-      + "  AND p.publication_time <= current_date()\n"
-      + "GROUP BY p.id\n"
-      + "ORDER BY count(pvl.value) DESC",
+  @Query(value = "SELECT * FROM posts "
+      + "LEFT JOIN users ON users.id = posts.user_id "
+      + "LEFT JOIN post_comments  ON post_comments.post_id = posts.id    "
+      + "LEFT JOIN post_votes  ON post_votes.post_id = posts.id AND post_votes.value = 1    "
+      + "WHERE is_active = 1     AND moderation_status = 'ACCEPTED'   "
+      + "AND publication_time <= current_date()   "
+      + "GROUP BY posts.id "
+      + "ORDER BY count(post_votes.value) DESC",
       nativeQuery = true)
-  List<String> findPostsOrderByLikes(Pageable pageable);
+  Page<Post> findPostsOrderByLikes(Pageable pageable);
 
-
-  @Query(value = "SELECT p.*\n"
-      + "FROM posts p\n"
-      + "LEFT JOIN users u ON u.id = p.user_id\n"
-      + "LEFT JOIN post_comments pc ON pc.post_id = p.id\n"
-      + "LEFT JOIN post_votes pvl ON pvl.post_id = p.id AND pvl.value = 1\n"
-      + "WHERE p.is_active = 1\n"
-      + "  AND p.moderation_status = 'ACCEPTED'\n"
-      + "  AND p.publication_time <= current_date()\n"
-      + "GROUP BY p.id\n"
-      + "ORDER BY count(pc.id) DESC",
+  @Query(value = "SELECT * FROM posts "
+      + "LEFT JOIN users ON users.id = posts.user_id "
+      + "LEFT JOIN post_comments  ON post_comments.post_id = posts.id    "
+      + "LEFT JOIN post_votes  ON post_votes.post_id = posts.id AND post_votes.value = 1    "
+      + "WHERE is_active = 1 AND moderation_status = 'ACCEPTED'   "
+      + "AND publication_time <= current_date()   "
+      + "GROUP BY posts.id "
+      + "ORDER BY count(post_comments.id) DESC",
       nativeQuery = true)
-  List<String> findPostsOrderByCommentCount(Pageable pageable);
+  Page<Post> findPostsOrderByCommentCount(Pageable pageable);
 
-
-  @Query(value = "SELECT post_id\n"
-      + "FROM tag2post\n"
-      + "JOIN tags ON tag2post.tag_id = tags.id\n"
-      + "WHERE name like ?1\n"
-      + "GROUP BY post_id",
+  @Query(value = "SELECT *\n"
+      + "FROM posts\n"
+      + "LEFT JOIN tag2post ON tag2post.post_id = posts.id\n"
+      + "LEFT JOIN tags ON tags.id = tag2post.tag_id\n"
+      + "WHERE is_active = 1\n"
+      + "  AND moderation_status = 'ACCEPTED'\n"
+      + "  AND publication_time <= current_date()\n"
+      + "  AND tags.name like '%'\n"
+      + "GROUP BY tags.name",
       nativeQuery = true)
-  List<Integer> getPostsByTag(String tag, Pageable pageable);
+  Page<Post> findPostsByTag(String tag, Pageable pageable);
 }
