@@ -1,5 +1,6 @@
 package myBlog.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import myBlog.service.TagService;
 
 @RestController
 @RequestMapping(path = "/api/")
+@AllArgsConstructor
 public class ApiGeneralController {
 
   private final SettingsService settingsService;
@@ -28,19 +30,18 @@ public class ApiGeneralController {
   private final TagService tagService;
   private final CalendarService calendarService;
 
-
-  public ApiGeneralController(SettingsService settingsService,
-      InitResponse initResponse,
-      PostService postService,
-      TagService tagService,
-      CalendarService calendarService
-  ) {
-    this.settingsService = settingsService;
-    this.initResponse = initResponse;
-    this.postService = postService;
-    this.tagService = tagService;
-    this.calendarService = calendarService;
-  }
+//  public ApiGeneralController(SettingsService settingsService,
+//      InitResponse initResponse,
+//      PostService postService,
+//      TagService tagService,
+//      CalendarService calendarService
+//  ) {
+//    this.settingsService = settingsService;
+//    this.initResponse = initResponse;
+//    this.postService = postService;
+//    this.tagService = tagService;
+//    this.calendarService = calendarService;
+//  }
 
   @GetMapping("/tag")
   private ResponseEntity<TagResponse> tagResponseEntity(@RequestParam(defaultValue = "") String query) {
