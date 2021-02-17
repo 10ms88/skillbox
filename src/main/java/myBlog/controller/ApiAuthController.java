@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import myBlog.api.response.CaptchaResponse;
+import myBlog.api.response.CaptchaCodeResponse;
 import myBlog.api.response.CheckAuthorizationResponse;
 import myBlog.service.CaptchaService;
 import myBlog.service.CheckAuthorizationService;
@@ -26,7 +26,7 @@ public class ApiAuthController {
   }
 
   @GetMapping("captcha")
-  private ResponseEntity<CaptchaResponse> getCaptchaCode() {
+  private ResponseEntity<CaptchaCodeResponse> getCaptchaCode() {
     return ResponseEntity.ok(captchaService.getCaptchaCode());
   }
 

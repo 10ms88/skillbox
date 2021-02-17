@@ -15,8 +15,8 @@ import myBlog.api.response.PostResponse;
 import myBlog.api.response.TagResponse;
 import myBlog.dto.GlobalSettingsDto;
 import myBlog.service.CalendarService;
+import myBlog.service.GlobalSettingsService;
 import myBlog.service.PostService;
-import myBlog.service.SettingsService;
 import myBlog.service.TagService;
 
 @RestController
@@ -24,24 +24,11 @@ import myBlog.service.TagService;
 @AllArgsConstructor
 public class ApiGeneralController {
 
-  private final SettingsService settingsService;
+  private final GlobalSettingsService settingsService;
   private final InitResponse initResponse;
   private final PostService postService;
   private final TagService tagService;
   private final CalendarService calendarService;
-
-//  public ApiGeneralController(SettingsService settingsService,
-//      InitResponse initResponse,
-//      PostService postService,
-//      TagService tagService,
-//      CalendarService calendarService
-//  ) {
-//    this.settingsService = settingsService;
-//    this.initResponse = initResponse;
-//    this.postService = postService;
-//    this.tagService = tagService;
-//    this.calendarService = calendarService;
-//  }
 
   @GetMapping("/tag")
   private ResponseEntity<TagResponse> tagResponseEntity(@RequestParam(defaultValue = "") String query) {

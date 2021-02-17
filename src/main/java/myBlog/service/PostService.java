@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,6 @@ public class PostService {
   PostRepository postRepository;
 
   public PostResponse getSearchedPosts(Pageable pageable, String query) {
-
-    log.info(postRepository.findPostsBySearchQuery("%" + query + "%", pageable).getPageable().toString());
-
     postResponse.setPosts(postRepository.findPostsBySearchQuery("%" + query + "%", pageable)
         .get()
         .map(PostDto::of)
@@ -37,9 +35,10 @@ public class PostService {
 
   public PostResponse getFilteredPosts(Pageable pageable, String mode) {
     List<PostDto> postDtoList = new ArrayList<>();
-
+    postResponse.setPosts(postDtoList);
     switch (mode) {
       case ("recent"):
+
         for (Post post : postRepository.findAll(Sort.by("publicationTime").descending())) {
           postDtoList.add(PostDto.of(post));
         }
@@ -50,10 +49,21 @@ public class PostService {
         }
         break;
       case ("best"):
-        postDtoList = postRepository.findPostsOrderByLikes(pageable)
-            .get()
-            .map(PostDto::of)
-            .collect(Collectors.toList());
+
+        Page<Post> page = postRepository.findPostsOrderByLikes(pageable);
+
+        log.info(String.valueOf(page.getTotalElements()));
+        log.info(String.valueOf(page.getTotalPages()));
+        log.info(String.valueOf(page.getContent().size()));
+        log.info(String.valueOf(page.getSize()));
+        log.info(String.valueOf(page.getNumberOfElements()));
+        log.info(String.valueOf(page.getNumber()));
+        log.info(String.valueOf(pageable.getPageSize()));
+        log.info(String.valueOf(pageable.getPageNumber()));
+        postResponse.setCount((page.getTotalElements()));
+        log.info(page.toString());
+        log.info(String.valueOf(page.getNumber()));
+
         break;
       case ("popular"):
         postDtoList = postRepository.findPostsOrderByCommentCount(pageable)
@@ -64,8 +74,8 @@ public class PostService {
       default:
         throw new IllegalStateException("Unexpected value: " + mode);
     }
-    postResponse.setCount(postDtoList.size());
-    postResponse.setPosts(postDtoList);
+//    postResponse.setCount(Integer.toUnsignedLong(postDtoList.size()));
+//    postResponse.setPosts(postDtoList);
     return postResponse;
   }
 
