@@ -42,7 +42,7 @@ public class ApiGeneralController {
       @RequestParam(required = false, defaultValue = "10") int limit,
       @RequestParam(required = false, defaultValue = "recent") String mode) {
 
-    Pageable pageable = PageRequest.of(offset, limit);
+    Pageable pageable = PageRequest.of(offset / 10, limit);
 
     return ResponseEntity.ok(postService.getFilteredPosts(pageable, mode));
   }
@@ -61,7 +61,7 @@ public class ApiGeneralController {
 
   @GetMapping("/calendar")
   private ResponseEntity<CalendarResponse> getPostByYear(String year) {
-
+    ResponseEntity.status(401).body(calendarService.getPostByYear(year));
     return ResponseEntity.ok(calendarService.getPostByYear(year));
   }
 

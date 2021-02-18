@@ -25,12 +25,15 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
 
 
   @Query(value = "SELECT date(publication_time),\n"
-      + " count(*)\n"
+      + "count(*)\n"
       + "FROM posts\n"
       + "WHERE is_active = 1\n"
-      + "  AND moderation_status = 'ACCEPTED'\n"
-      + "  AND publication_time BETWEEN ?1 AND ?2\n"
-      + "GROUP BY publication_time",
+      + "AND moderation_status = 'ACCEPTED'\n"
+      + "AND publication_time <= current_date()\n"
+      + "AND publication_time\n"
+      + "BETWEEN ?1\n"
+      + "AND ?2\n"
+      + "GROUP BY  date(publication_time) ",
       nativeQuery = true)
   List<String> findPostsByYear(String yearStart, String yearEnd);
 
@@ -51,6 +54,22 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       + "AND publication_time <= current_date()",
       nativeQuery = true)
   Page<Post> findPostsBySearchQuery(String query, Pageable pageable);
+
+
+  @Query(value = "SELECT * FROM posts "
+      + "WHERE is_active = 1     AND moderation_status = 'ACCEPTED'   "
+      + "AND publication_time <= current_date()   "
+      + "ORDER BY publication_time DESC",
+      nativeQuery = true)
+  Page<Post> findPostsOrderByDateDesc(Pageable pageable);
+
+  @Query(value = "SELECT * FROM posts "
+      + "WHERE is_active = 1     AND moderation_status = 'ACCEPTED'   "
+      + "AND publication_time <= current_date()   "
+      + "ORDER BY publication_time ASC",
+      nativeQuery = true)
+  Page<Post> findPostsOrderByDateAsc(Pageable pageable);
+
 
   @Query(value = "SELECT * FROM posts "
       + "LEFT JOIN users ON users.id = posts.user_id "
@@ -81,8 +100,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       + "WHERE is_active = 1\n"
       + "  AND moderation_status = 'ACCEPTED'\n"
       + "  AND publication_time <= current_date()\n"
-      + "  AND tags.name like '%'\n"
-      + "GROUP BY tags.name",
+      + "  AND tags.name like ?1",
       nativeQuery = true)
   Page<Post> findPostsByTag(String tag, Pageable pageable);
 }
