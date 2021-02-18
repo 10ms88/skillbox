@@ -1,11 +1,19 @@
 package myBlog.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class GlobalSettingsDto {
 
-  private final boolean MULTIUSER_MODE;
-  private final boolean POST_PREMODERATION;
-  private final boolean STATISTICS_IS_PUBLIC;
+  @JsonProperty("MULTIUSER_MODE")
+  private boolean MULTIUSER_MODE;
+
+  @JsonProperty("POST_PREMODERATION")
+  private boolean POST_PREMODERATION;
+
+  @JsonProperty("STATISTICS_IS_PUBLIC")
+  private boolean STATISTICS_IS_PUBLIC;
 }

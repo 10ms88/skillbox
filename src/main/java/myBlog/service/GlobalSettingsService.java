@@ -9,15 +9,13 @@ import myBlog.model.GlobalSetting;
 import myBlog.repository.GlobalSettingsRepository;
 
 @Service
-public class SettingsService {
+public class GlobalSettingsService {
 
 
   @Autowired
   GlobalSettingsRepository globalSettingsRepository;
 
-
   public GlobalSettingsDto getGlobalSettings() {
-
     List<GlobalSetting> globalSettingList = globalSettingsRepository.findAll();
     boolean MULTIUSER_MODE = true;
     boolean POST_PREMODERATION = true;
