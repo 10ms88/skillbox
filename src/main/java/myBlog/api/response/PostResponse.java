@@ -9,8 +9,5 @@ import myBlog.dto.PostDto;
 public class PostResponse {
 
     private Long count;
-
     private List<PostDto> posts;
-
-
 }

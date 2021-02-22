@@ -1,15 +1,13 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
   <changeSet author="MIS (generated)" id="1612804340088-25">
     <sql>
-      INSERT global_settings (code, name, value) VALUES ('MULTIUSER_MODE', 'Многопользовательский режим', 'YES'),
-      ('POST_PREMODERATION', 'Премодерация постов', 'YES'), ('STATISTICS_IS_PUBLIC', 'Показывать всем статистику
+      INSERT global_settings (code, name, value) VALUES ('MULTIUSER_MODE', 'Многопользовательский режим', 'NO'),
+      ('POST_PREMODERATION', 'Премодерация постов', 'NO'), ('STATISTICS_IS_PUBLIC', 'Показывать всем статистику
       блога',
-      'YES')
+      'NO')
     </sql>
   </changeSet>
 
@@ -29,7 +27,8 @@
     <sql>
       INSERT posts (is_active, moderation_status, publication_time, text, title, view_count, moderator_id,
       user_id)
-      VALUES (1, 'ACCEPTED', '2021-02-08', 'Фадеев рассказал о своем опыте вакцинации, вспомнив, что в первый день
+      VALUES (1, 'ACCEPTED', '2021-02-08 05:00:00', 'Фадеев рассказал о своем опыте вакцинации, вспомнив, что в первый
+      день
       место
       прививки слегка болело. Позднее появилась сонливость, которую, по словам продюсера, практически невозможно
       было
