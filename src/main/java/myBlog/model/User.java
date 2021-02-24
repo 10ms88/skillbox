@@ -13,6 +13,8 @@ import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 
+import myBlog.enumuration.Role;
+
 @Builder
 @Entity
 @Table(name = "users")
@@ -23,7 +25,7 @@ public class User {
   public User() {
   }
 
-
+  @Column
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
@@ -44,9 +46,15 @@ public class User {
   @Column(nullable = false)
   private String password;
 
+  @Column
   private String code;
 
+  @Column
   @Type(type = "text")
   private String photo;
+
+  public Role getRole() {
+    return isModerator ? Role.MODERATOR : Role.USER;
+  }
 
 }
