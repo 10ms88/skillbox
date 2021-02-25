@@ -47,10 +47,15 @@ public class ApiAuthController {
     return ResponseEntity.ok(userService.createUser(registrationRequest));
   }
 
-
   @PostMapping("login")
   private ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-    return ResponseEntity.ok(userService.getLoginResponseFromLoginRequest(loginRequest));
+    return ResponseEntity.ok(userService.setAuthentication(loginRequest));
   }
 
+  @GetMapping("logout")
+  private ResponseEntity<LoginResponse> logout() {
+    LoginResponse loginResponse = new LoginResponse();
+    loginResponse.setResult(true);
+    return ResponseEntity.ok(loginResponse);
+  }
 }

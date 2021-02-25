@@ -14,15 +14,20 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import myBlog.enumuration.ModerationStatus;
 
-
+@Builder
 @Entity
 @Table(name = "posts")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Post {
 
   @Id

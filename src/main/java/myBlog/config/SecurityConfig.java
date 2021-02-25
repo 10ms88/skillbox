@@ -28,7 +28,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-
     http
         .csrf().disable()
         .authorizeRequests()
@@ -37,7 +36,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authenticated()
         .and()
         .formLogin().disable()
-        .httpBasic();
+        .httpBasic()
+        .and()
+        .logout().logoutSuccessUrl("/login?logout")
+        .and()
+        .csrf()
+        .disable();
   }
 
   @Bean

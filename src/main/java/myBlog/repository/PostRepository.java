@@ -103,4 +103,19 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       + "  AND tags.name like ?1",
       nativeQuery = true)
   Page<Post> findPostsByTag(String tag, Pageable pageable);
+
+
+  @Query(value = "SELECT * FROM posts where moderation_status = 'NEW' AND is_active = 1 AND moderator_id IS null",
+      nativeQuery = true)
+  Page<Post> findPostsForModeration(Pageable pageable);
+
+
+  @Query(value = "SELECT * FROM posts where moderation_status = ?1 AND is_active = 1 AND moderator_id = ?2",
+      nativeQuery = true)
+  Page<Post> findModeratedPosts(String status, Integer userId, Pageable pageable);
+
+  @Query(value = "SELECT * FROM posts WHERE user_id = ?1 AND is_active = ?2 AND moderation_status like ?3",
+      nativeQuery = true)
+  Page<Post> findMyPosts(Integer userId, Integer isActive, String moderationStatus, Pageable pageable);
+
 }
