@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
   <changeSet author="MIS (generated)" id="1612804340088-25">
     <sql>
-      INSERT global_settings (code, name, value) VALUES ('MULTIUSER_MODE', 'Многопользовательский режим', 'NO'),
+      INSERT global_settings (code, name, value) VALUES ('MULTIUSER_MODE', 'Многопользовательский режим', 'YES'),
       ('POST_PREMODERATION', 'Премодерация постов', 'NO'), ('STATISTICS_IS_PUBLIC', 'Показывать всем статистику
       блога',
       'NO')
@@ -19,8 +19,8 @@
   <changeSet author="MIS (generated)" id="1612804340088-27">
     <sql>
       INSERT users (code, email, is_moderator, name, password, photo, registration_time) VALUES (null,
-      'mmmsss.88@mail.ru', 1, 'Михаил', '1234qwer', null, '2020-10-23'), (null, 'mmmsss.99@mail.ru', 0, 'Виталий',
-      'qwer1234', null, '2020-11-23'), (null, 'mmmsss.77@mail.ru', 0, 'Николай', '1qaz2wsx', null, '2020-08-23')
+      'mmmsss.88@mail.ru', 1, 'Михаил', '$2y$12$6y0zt8forRk/jQra6M73ke.QlV6GKBUBL3MqpTRmuKpRzJFzh5gEu', null, '2020-10-23'), (null, 'mmmsss.99@mail.ru', 0, 'Виталий',
+      '$2y$12$6y0zt8forRk/jQra6M73ke.QlV6GKBUBL3MqpTRmuKpRzJFzh5gEu', null, '2020-11-23'), (null, 'mmmsss.77@mail.ru', 0, 'Николай', '$2y$12$6y0zt8forRk/jQra6M73ke.QlV6GKBUBL3MqpTRmuKpRzJFzh5gEu', null, '2020-08-23')
     </sql>
   </changeSet>
   <changeSet author="MIS (generated)" id="1612804340088-28">

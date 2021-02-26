@@ -64,7 +64,9 @@ public class UserService {
     Optional<CaptchaCode> captchaCode = captchaCodeRepository.findByCode(registrationRequest.getCaptcha());
     if (captchaCode.isEmpty()) {
       registrationResponse.getErrors().put("captcha", "Код с картинки введён неверно");
-    } else {
+    }
+
+    if (registrationResponse.getErrors().size() ==0) {
       userRepository.save(User.builder()
           .isModerator(false)
           .email(registrationRequest.getEmail())
