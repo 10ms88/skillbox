@@ -24,11 +24,19 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
   @ExceptionHandler(value = MultipartException.class)
   protected ResponseEntity<NewException> handleFileSizeLimitExceededException() {
-
     HashMap<String, String> errors = new HashMap<>();
     errors.put("image", "Размер файла превышает допустимый размер");
     return new ResponseEntity<>(new NewException(false, errors), HttpStatus.BAD_REQUEST);
   }
+
+
+  @ExceptionHandler(value = CommentException.class)
+  protected ResponseEntity<NewException> handleCommentException() {
+    HashMap<String, String> errors = new HashMap<>();
+    errors.put("text", "Текст комментария не задан или слишком короткий");
+    return new ResponseEntity<>(new NewException(false, errors), HttpStatus.BAD_REQUEST);
+  }
+
 
   @Data
   @AllArgsConstructor

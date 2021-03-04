@@ -18,7 +18,7 @@ import myBlog.service.CaptchaService;
 import myBlog.service.UserService;
 
 @RestController
-@RequestMapping("/api/auth/")
+@RequestMapping("/api/auth")
 @AllArgsConstructor
 public class ApiAuthController {
 
@@ -27,7 +27,7 @@ public class ApiAuthController {
   private final UserService userService;
 
 
-  @GetMapping("check")
+  @GetMapping("/check")
   private ResponseEntity<LoginResponse> checkAuthorizationResponse(Principal principal) {
     if (principal == null) {
       return ResponseEntity.ok(new LoginResponse());
@@ -35,24 +35,24 @@ public class ApiAuthController {
     return ResponseEntity.ok(userService.getLoginResponseFromEmail(principal.getName()));
   }
 
-  @GetMapping("captcha")
+  @GetMapping("/captcha")
   private ResponseEntity<CaptchaCodeResponse> getCaptchaCode() {
     return ResponseEntity.ok(captchaService.getCaptchaCode());
   }
 
-  @PostMapping("register")
+  @PostMapping("/register")
   private ResponseEntity<RegistrationResponse> userRegistration(
       @RequestBody RegistrationRequest registrationRequest
   ) {
     return ResponseEntity.ok(userService.createUser(registrationRequest));
   }
 
-  @PostMapping("login")
+  @PostMapping("/login")
   private ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
     return ResponseEntity.ok(userService.setAuthentication(loginRequest));
   }
 
-  @GetMapping("logout")
+  @GetMapping("/logout")
   private ResponseEntity<LoginResponse> logout() {
     LoginResponse loginResponse = new LoginResponse();
     loginResponse.setResult(true);

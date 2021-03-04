@@ -1,34 +1,34 @@
 package myBlog.controller;
 
-import static java.lang.String.format;
-
-import java.io.File;
 import lombok.AllArgsConstructor;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import myBlog.annotation.UserEmail;
+import myBlog.api.request.CommentRequest;
 import myBlog.api.response.CalendarResponse;
+import myBlog.api.response.CommentResponse;
 import myBlog.api.response.InitResponse;
 import myBlog.api.response.PostResponse;
 import myBlog.api.response.TagResponse;
 import myBlog.dto.GlobalSettingsDto;
 import myBlog.service.CalendarService;
+import myBlog.service.CommentService;
 import myBlog.service.GlobalSettingsService;
 import myBlog.service.ImageService;
 import myBlog.service.PostService;
 import myBlog.service.TagService;
 
 @RestController
-@RequestMapping(path = "/api/")
+@RequestMapping(path = "/api")
 @AllArgsConstructor
 public class ApiGeneralController {
 
@@ -38,6 +38,7 @@ public class ApiGeneralController {
   private final TagService tagService;
   private final CalendarService calendarService;
   private final ImageService imageService;
+  private final CommentService commentService;
 
 
   @GetMapping("/tag")
@@ -46,7 +47,7 @@ public class ApiGeneralController {
   }
 
 
-  @GetMapping("post")
+  @GetMapping("/post")
   private ResponseEntity<PostResponse> getSearchedPosts(
       @RequestParam(required = false, defaultValue = "0") int offset,
       @RequestParam(required = false, defaultValue = "10") int limit,
@@ -71,24 +72,22 @@ public class ApiGeneralController {
 
   @GetMapping("/calendar")
   private ResponseEntity<CalendarResponse> getPostByYear(String year) {
+
+    String uploadDirectory = System.getProperty("user.dir") + "/uploads";
     return ResponseEntity.ok(calendarService.getPostByYear(year));
   }
 
-
   @PostMapping("/image")
-  private ResponseEntity<?> postImage(@RequestParam MultipartFile image) throws Exception {
-
-    if (imageService.saveImage(image).isResult()) {
-      String path = format("upload/%s/", RandomStringUtils.randomAlphanumeric(5).toLowerCase()) +
-          format("%s/", RandomStringUtils.randomAlphanumeric(5).toLowerCase()) +
-          format("%s/", RandomStringUtils.randomAlphanumeric(5).toLowerCase()) +
-          image.getOriginalFilename();
-      FileUtils.writeByteArrayToFile(new File(path), image.getBytes());
-      return ResponseEntity.ok(path);
-    } else {
-      throw new Exception();
-    }
+  private String postImage(@RequestParam MultipartFile image) throws Exception {
+    return imageService.saveImage(image);
   }
+
+  @PostMapping("/comment")
+  private ResponseEntity<CommentResponse> postImage(@RequestBody CommentRequest commentRequest,
+      @UserEmail String userEmail) {
+    return ResponseEntity.ok(commentService.addComment(commentRequest, userEmail));
+  }
+
 }
 
 
