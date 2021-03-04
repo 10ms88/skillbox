@@ -10,19 +10,24 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "post_comments")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostComment {
 
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
-
 
   private Integer parentId;
 
