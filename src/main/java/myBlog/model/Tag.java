@@ -9,11 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tags")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Tag {
 
   @Id
@@ -25,6 +31,5 @@ public class Tag {
 
   @OneToMany(mappedBy = "tag")
   private List<Tag2Post> postList;
-
 
 }

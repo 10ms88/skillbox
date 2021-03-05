@@ -14,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import liquibase.pro.packaged.T;
 import myBlog.api.request.ModerationRequest;
 import myBlog.api.request.PostRequest;
 import myBlog.api.response.PostResponse;
@@ -201,6 +200,10 @@ public class PostService {
     registrationResponse.setErrors(new HashMap<>());
     registrationResponse.setResult(false);
 
+    postRepository.findById(postId).get().getTag2PostList().forEach(tag2Post -> {
+      tag2PostRepositoryRepository.delete(tag2Post);
+    });
+
     if (postRequest.getTitle().length() < 3) {
       registrationResponse.getErrors().put("title", "Заголовок не установлен");
     }
@@ -219,7 +222,7 @@ public class PostService {
     }
 
     if (registrationResponse.getErrors().size() == 0) {
-      postRepository.save(Post.builder()
+      Post post = postRepository.save(Post.builder()
           .id(postId)
           .isActive(isActive)
           .moderationStatus(ModerationStatus.NEW)
@@ -232,13 +235,17 @@ public class PostService {
           .build());
       registrationResponse.setResult(true);
       registrationResponse.setErrors(null);
+
+      findTagOrCreate(postRequest.getTags()).forEach(tag -> {
+        tag2PostRepositoryRepository.insertTag2Post(post.getId(), tag.getId());
+      });
+
     }
     return registrationResponse;
   }
 
   public RegistrationResponse moderatePost(ModerationRequest moderationRequest, String userEmail) {
     Post post = postRepository.findById(moderationRequest.getPostId()).get();
-    System.out.println(post.toString());
     User user = userRepository.findByEmail(userEmail).get();
     if (moderationRequest.getDecision().equals("accept")) {
       post.setModerationStatus(ModerationStatus.ACCEPTED);
@@ -246,7 +253,6 @@ public class PostService {
       post.setModerationStatus(ModerationStatus.DECLINED);
     }
     post.setModerator(user);
-    System.out.println(post.toString());
     postRepository.save(post);
     registrationResponse.setResult(true);
     return registrationResponse;
@@ -259,7 +265,9 @@ public class PostService {
       if (tag.isPresent()) {
         tagList.add(tag.get());
       } else {
-        tagList.add(tagRepository.insertTag(s));
+        tagList.add(tagRepository.save(Tag.builder()
+            .name(s)
+            .build()));
       }
     });
     return tagList;
