@@ -8,11 +8,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tag2post")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Tag2Post {
 
   @Id
