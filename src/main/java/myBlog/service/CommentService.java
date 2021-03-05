@@ -39,7 +39,7 @@ public class CommentService {
           .text(commentRequest.getText())
           .build());
       commentResponse.setCommentId(comment.getId());
-//      commentRepository.update(post.getId(), user.getId(), comment.getId());
+      commentRepository.update(post.getId(), user.getId(), comment.getId());
       return commentResponse;
     } else {
       throw new CommentException();
