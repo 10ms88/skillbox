@@ -36,12 +36,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authenticated()
         .and()
         .formLogin().disable()
-        .httpBasic()
-        .and()
+        .httpBasic();
+
+    http
         .logout()
-//        .logoutUrl("/api/auth/logout")
-//        .invalidateHttpSession(true)
-//        .logoutSuccessUrl("/login")
+        .logoutSuccessUrl("/login")
     ;
   }
 

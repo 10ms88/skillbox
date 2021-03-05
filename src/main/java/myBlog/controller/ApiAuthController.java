@@ -54,6 +54,7 @@ public class ApiAuthController {
 
   @GetMapping("/logout")
   private ResponseEntity<LoginResponse> logout() {
+    System.out.println("/api/auth/logout");
     LoginResponse loginResponse = new LoginResponse();
     loginResponse.setResult(true);
     return ResponseEntity.ok(loginResponse);
