@@ -14,11 +14,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import myBlog.annotation.UserEmail;
 import myBlog.api.request.CommentRequest;
+import myBlog.api.request.ProfileRequest;
 import myBlog.api.response.CalendarResponse;
 import myBlog.api.response.CommentResponse;
 import myBlog.api.response.InitResponse;
 import myBlog.api.response.PostResponse;
 import myBlog.api.response.TagResponse;
+import myBlog.api.response.UserStatisticResponse;
 import myBlog.dto.GlobalSettingsDto;
 import myBlog.service.CalendarService;
 import myBlog.service.CommentService;
@@ -26,6 +28,7 @@ import myBlog.service.GlobalSettingsService;
 import myBlog.service.ImageService;
 import myBlog.service.PostService;
 import myBlog.service.TagService;
+import myBlog.service.UserService;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -39,6 +42,7 @@ public class ApiGeneralController {
   private final CalendarService calendarService;
   private final ImageService imageService;
   private final CommentService commentService;
+  private final UserService userService;
 
 
   @GetMapping("/tag")
@@ -86,6 +90,17 @@ public class ApiGeneralController {
   private ResponseEntity<CommentResponse> postImage(@RequestBody CommentRequest commentRequest,
       @UserEmail String userEmail) {
     return ResponseEntity.ok(commentService.addComment(commentRequest, userEmail));
+  }
+
+  @PostMapping("/profile/my")
+  private ResponseEntity<ProfileRequest> postImage(@RequestBody ProfileRequest profileRequest,
+      @UserEmail String userEmail) {
+    return ResponseEntity.ok(profileRequest);
+  }
+
+  @GetMapping("/statistics/my")
+  private ResponseEntity<UserStatisticResponse> getMyStatistic(@UserEmail String userEmail) {
+    return ResponseEntity.ok(userService.getMyStatistic(userEmail));
   }
 
 }

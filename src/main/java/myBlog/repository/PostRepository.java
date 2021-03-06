@@ -1,5 +1,6 @@
 package myBlog.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -117,5 +118,19 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
   @Query(value = "SELECT * FROM posts WHERE user_id = ?1 AND is_active = ?2 AND moderation_status like ?3",
       nativeQuery = true)
   Page<Post> findMyPosts(Integer userId, Integer isActive, String moderationStatus, Pageable pageable);
+
+
+  @Query(value = "SELECT count(user_id) FROM posts where user_id = ?1 group by user_id",
+      nativeQuery = true)
+  Integer getMyPosts(Integer userId);
+
+  @Query(value = "SELECT sum(view_count) FROM posts where user_id = ?1",
+      nativeQuery = true)
+  Integer getTotalViewCount(Integer userId);
+
+  @Query(value = "SELECT min(publication_time) FROM posts where user_id = ?1",
+      nativeQuery = true)
+  LocalDateTime getMyFirstPublication(Integer userId);
+
 
 }
