@@ -1,6 +1,8 @@
 package myBlog.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -22,10 +24,12 @@ import myBlog.api.request.RegistrationRequest;
 import myBlog.api.response.LoginResponse;
 import myBlog.api.response.RegistrationResponse;
 import myBlog.api.response.UserLoginResponse;
+import myBlog.api.response.UserStatisticResponse;
 import myBlog.model.CaptchaCode;
 import myBlog.model.User;
 import myBlog.repository.CaptchaCodeRepository;
 import myBlog.repository.PostRepository;
+import myBlog.repository.PostVoteRepository;
 import myBlog.repository.UserRepository;
 
 @Service
@@ -43,6 +47,8 @@ public class UserService {
   private CaptchaCodeRepository captchaCodeRepository;
   @Autowired
   private PostRepository postRepository;
+  @Autowired
+  private PostVoteRepository postVoteRepository;
 
 
   public RegistrationResponse createUser(RegistrationRequest registrationRequest) {
@@ -118,5 +124,17 @@ public class UserService {
     org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
 
     return getLoginResponseFromEmail(user.getUsername());
+  }
+
+  public UserStatisticResponse getMyStatistic(String userEmail) {
+    User user = userRepository.findByEmail(userEmail).get();
+
+    return UserStatisticResponse.builder()
+        .postsCount(postRepository.getMyPosts(user.getId()))
+        .likesCount(postVoteRepository.getLikeCount(user.getId()))
+        .disLikesCount(postVoteRepository.getDislikeCount(user.getId()))
+        .viewsCount(postRepository.getTotalViewCount(user.getId()))
+        .firstPublication(ZonedDateTime.of(postRepository.getMyFirstPublication(user.getId()), ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000)
+        .build();
   }
 }
