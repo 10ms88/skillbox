@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +37,14 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     errors.put("text", "Текст комментария не задан или слишком короткий");
     return new ResponseEntity<>(new NewException(false, errors), HttpStatus.BAD_REQUEST);
   }
+  @ExceptionHandler(value = SpelEvaluationException.class)
+  protected ResponseEntity<NewException> handleSpelEvaluationException() {
+    HashMap<String, String> errors = new HashMap<>();
+    errors.put("text", "Пользователь не авторизован");
+    return new ResponseEntity<>(new NewException(false, errors), HttpStatus.UNAUTHORIZED);
+  }
+
+
 
 
   @Data

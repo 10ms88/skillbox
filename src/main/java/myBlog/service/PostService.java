@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import myBlog.api.request.ModerationRequest;
 import myBlog.api.request.PostRequest;
 import myBlog.api.response.PostResponse;
-import myBlog.api.response.RegistrationResponse;
+import myBlog.api.response.MainResponse;
 import myBlog.dto.PostDto;
 import myBlog.dto.PostIdDto;
 import myBlog.enumuration.ModerationStatus;
@@ -32,7 +32,7 @@ import myBlog.repository.UserRepository;
 @Service
 public class PostService {
 
-  private final RegistrationResponse registrationResponse = new RegistrationResponse();
+  private final MainResponse mainResponse = new MainResponse();
   private final PostResponse postResponse = new PostResponse();
 
   @Autowired
@@ -149,17 +149,17 @@ public class PostService {
     return postResponse;
   }
 
-  public RegistrationResponse createPost(PostRequest postRequest, String userEmail) {
+  public MainResponse createPost(PostRequest postRequest, String userEmail) {
     boolean isActive = false;
     Long timestampNow = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()).toInstant().toEpochMilli();
-    registrationResponse.setErrors(new HashMap<>());
-    registrationResponse.setResult(false);
+    mainResponse.setErrors(new HashMap<>());
+    mainResponse.setResult(false);
 
     if (postRequest.getTitle().length() < 3) {
-      registrationResponse.getErrors().put("title", "Заголовок не установлен");
+      mainResponse.getErrors().put("title", "Заголовок не установлен");
     }
     if (postRequest.getText().length() < 151) {
-      registrationResponse.getErrors().put("text", "Текст публикации слишком короткий");
+      mainResponse.getErrors().put("text", "Текст публикации слишком короткий");
     }
     if (postRequest.getTimestamp() < timestampNow) {
       postRequest.setTimestamp(timestampNow);
@@ -172,7 +172,7 @@ public class PostService {
       isActive = true;
     }
 
-    if (registrationResponse.getErrors().size() == 0) {
+    if (mainResponse.getErrors().size() == 0) {
       Post post = postRepository.save(Post.builder()
           .isActive(isActive)
           .moderationStatus(ModerationStatus.NEW)
@@ -188,27 +188,27 @@ public class PostService {
         tag2PostRepositoryRepository.insertTag2Post(post.getId(), tag.getId());
       });
 
-      registrationResponse.setResult(true);
-      registrationResponse.setErrors(null);
+      mainResponse.setResult(true);
+      mainResponse.setErrors(null);
     }
-    return registrationResponse;
+    return mainResponse;
   }
 
-  public RegistrationResponse updatePost(PostRequest postRequest, String userEmail, Integer postId) {
+  public MainResponse updatePost(PostRequest postRequest, String userEmail, Integer postId) {
     boolean isActive = false;
     Long timestampNow = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()).toInstant().toEpochMilli();
-    registrationResponse.setErrors(new HashMap<>());
-    registrationResponse.setResult(false);
+    mainResponse.setErrors(new HashMap<>());
+    mainResponse.setResult(false);
 
     postRepository.findById(postId).get().getTag2PostList().forEach(tag2Post -> {
       tag2PostRepositoryRepository.delete(tag2Post);
     });
 
     if (postRequest.getTitle().length() < 3) {
-      registrationResponse.getErrors().put("title", "Заголовок не установлен");
+      mainResponse.getErrors().put("title", "Заголовок не установлен");
     }
     if (postRequest.getText().length() < 151) {
-      registrationResponse.getErrors().put("text", "Текст публикации слишком короткий");
+      mainResponse.getErrors().put("text", "Текст публикации слишком короткий");
     }
     if (postRequest.getTimestamp() < timestampNow) {
       postRequest.setTimestamp(timestampNow);
@@ -221,7 +221,7 @@ public class PostService {
       isActive = true;
     }
 
-    if (registrationResponse.getErrors().size() == 0) {
+    if (mainResponse.getErrors().size() == 0) {
       Post post = postRepository.save(Post.builder()
           .id(postId)
           .isActive(isActive)
@@ -233,18 +233,18 @@ public class PostService {
           .moderator(null)
           .user(userRepository.findByEmail(userEmail).get())
           .build());
-      registrationResponse.setResult(true);
-      registrationResponse.setErrors(null);
+      mainResponse.setResult(true);
+      mainResponse.setErrors(null);
 
       findTagOrCreate(postRequest.getTags()).forEach(tag -> {
         tag2PostRepositoryRepository.insertTag2Post(post.getId(), tag.getId());
       });
 
     }
-    return registrationResponse;
+    return mainResponse;
   }
 
-  public RegistrationResponse moderatePost(ModerationRequest moderationRequest, String userEmail) {
+  public MainResponse moderatePost(ModerationRequest moderationRequest, String userEmail) {
     Post post = postRepository.findById(moderationRequest.getPostId()).get();
     User user = userRepository.findByEmail(userEmail).get();
     if (moderationRequest.getDecision().equals("accept")) {
@@ -254,8 +254,8 @@ public class PostService {
     }
     post.setModerator(user);
     postRepository.save(post);
-    registrationResponse.setResult(true);
-    return registrationResponse;
+    mainResponse.setResult(true);
+    return mainResponse;
   }
 
   private List<Tag> findTagOrCreate(List<String> tags) {

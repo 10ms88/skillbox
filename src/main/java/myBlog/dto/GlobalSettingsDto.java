@@ -1,8 +1,13 @@
 package myBlog.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+
+import myBlog.model.Post;
 
 @Data
 @AllArgsConstructor

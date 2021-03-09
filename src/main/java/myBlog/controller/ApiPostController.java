@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import myBlog.annotation.UserEmail;
+import myBlog.api.request.PostVoteRequest;
 import myBlog.api.request.ModerationRequest;
 import myBlog.api.request.PostRequest;
 import myBlog.api.response.PostResponse;
-import myBlog.api.response.RegistrationResponse;
+import myBlog.api.response.MainResponse;
 import myBlog.dto.PostIdDto;
+import myBlog.service.PostVoteService;
 import myBlog.service.PostService;
 
 @RestController
@@ -25,10 +27,12 @@ import myBlog.service.PostService;
 public class ApiPostController {
 
   private final PostService postService;
+  private final PostVoteService postVoteService;
 
 
-  public ApiPostController(PostService postService) {
+  public ApiPostController(PostService postService, PostVoteService postVoteService) {
     this.postService = postService;
+    this.postVoteService = postVoteService;
   }
 
 
@@ -92,7 +96,7 @@ public class ApiPostController {
   }
 
   @PostMapping("/post")
-  private ResponseEntity<RegistrationResponse> addPost(
+  private ResponseEntity<MainResponse> addPost(
       @RequestBody PostRequest postRequest,
       @UserEmail String userEmail
   ) {
@@ -100,20 +104,35 @@ public class ApiPostController {
   }
 
   @PutMapping("/post/{postId}")
-  private ResponseEntity<RegistrationResponse> updatePost(
+  private ResponseEntity<MainResponse> updatePost(
       @RequestBody PostRequest postRequest,
       @UserEmail String userEmail,
       @PathVariable Integer postId
   ) {
     return ResponseEntity.ok(postService.updatePost(postRequest, userEmail, postId));
   }
+
   @PostMapping("/moderation")
-  private ResponseEntity<RegistrationResponse> moderatePost(
+  private ResponseEntity<MainResponse> moderatePost(
       @RequestBody ModerationRequest moderationRequest,
       @UserEmail String userEmail
   ) {
     return ResponseEntity.ok(postService.moderatePost(moderationRequest, userEmail));
   }
 
+  @PostMapping("/post/like")
+  private ResponseEntity<MainResponse> addLike(
+      @RequestBody PostVoteRequest postVoteRequest,
+      @UserEmail String userEmail
+  ) {
+    return ResponseEntity.ok(postVoteService.addLike(postVoteRequest, userEmail));
+  }
 
+  @PostMapping("/post/dislike")
+  private ResponseEntity<MainResponse> addDislike(
+      @RequestBody PostVoteRequest postVoteRequest,
+      @UserEmail String userEmail
+  ) {
+    return ResponseEntity.ok(postVoteService.addDislike(postVoteRequest, userEmail));
+  }
 }
