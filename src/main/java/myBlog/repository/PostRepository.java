@@ -126,11 +126,19 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
 
   @Query(value = "SELECT sum(view_count) FROM posts where user_id = ?1",
       nativeQuery = true)
-  Integer getTotalViewCount(Integer userId);
+  Integer getMyTotalViewCount(Integer userId);
+
+  @Query(value = "SELECT sum(view_count) FROM posts",
+      nativeQuery = true)
+  Integer getTotalViewCount();
+
 
   @Query(value = "SELECT min(publication_time) FROM posts where user_id = ?1",
       nativeQuery = true)
   LocalDateTime getMyFirstPublication(Integer userId);
 
+  @Query(value = "SELECT min(publication_time) FROM posts",
+      nativeQuery = true)
+  LocalDateTime getFirstPublication();
 
 }

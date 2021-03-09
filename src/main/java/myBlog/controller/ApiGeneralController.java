@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +21,7 @@ import myBlog.api.response.CommentResponse;
 import myBlog.api.response.InitResponse;
 import myBlog.api.response.PostResponse;
 import myBlog.api.response.TagResponse;
-import myBlog.api.response.UserStatisticResponse;
+import myBlog.api.response.StatisticResponse;
 import myBlog.dto.GlobalSettingsDto;
 import myBlog.service.CalendarService;
 import myBlog.service.CommentService;
@@ -69,6 +70,12 @@ public class ApiGeneralController {
   }
 
 
+  @PutMapping("/settings")
+  private void setSettings(@RequestBody GlobalSettingsDto globalSettingsDto) {
+    settingsService.setGlobalSettings(globalSettingsDto);
+  }
+
+
   @GetMapping("/init")
   private ResponseEntity<InitResponse> init() {
     return ResponseEntity.ok(initResponse);
@@ -76,8 +83,6 @@ public class ApiGeneralController {
 
   @GetMapping("/calendar")
   private ResponseEntity<CalendarResponse> getPostByYear(String year) {
-
-    String uploadDirectory = System.getProperty("user.dir") + "/uploads";
     return ResponseEntity.ok(calendarService.getPostByYear(year));
   }
 
@@ -99,10 +104,19 @@ public class ApiGeneralController {
   }
 
   @GetMapping("/statistics/my")
-  private ResponseEntity<UserStatisticResponse> getMyStatistic(@UserEmail String userEmail) {
+  private ResponseEntity<StatisticResponse> getMyStatistic(@UserEmail String userEmail) {
     return ResponseEntity.ok(userService.getMyStatistic(userEmail));
   }
 
+  @GetMapping("/statistics/all")
+  private ResponseEntity<StatisticResponse> getAllStatistic() {
+    StatisticResponse statisticResponse = userService.getAllStatistic();
+    if (statisticResponse == null) {
+      return ResponseEntity.status(401).build();
+    } else {
+      return ResponseEntity.ok(statisticResponse);
+    }
+  }
 }
 
 

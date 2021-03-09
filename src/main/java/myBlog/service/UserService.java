@@ -1,5 +1,6 @@
 package myBlog.service;
 
+import com.google.common.collect.Iterables;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -22,9 +23,9 @@ import org.springframework.stereotype.Service;
 import myBlog.api.request.LoginRequest;
 import myBlog.api.request.RegistrationRequest;
 import myBlog.api.response.LoginResponse;
-import myBlog.api.response.RegistrationResponse;
+import myBlog.api.response.MainResponse;
 import myBlog.api.response.UserLoginResponse;
-import myBlog.api.response.UserStatisticResponse;
+import myBlog.api.response.StatisticResponse;
 import myBlog.model.CaptchaCode;
 import myBlog.model.User;
 import myBlog.repository.CaptchaCodeRepository;
@@ -38,7 +39,7 @@ import myBlog.repository.UserRepository;
 public class UserService {
 
 
-  private final RegistrationResponse registrationResponse = new RegistrationResponse();
+  private final MainResponse mainResponse = new MainResponse();
   @Autowired
   private AuthenticationManager authenticationManager;
   @Autowired
@@ -49,30 +50,32 @@ public class UserService {
   private PostRepository postRepository;
   @Autowired
   private PostVoteRepository postVoteRepository;
+  @Autowired
+  private GlobalSettingsService globalSettingsService;
 
 
-  public RegistrationResponse createUser(RegistrationRequest registrationRequest) {
-    registrationResponse.setErrors(new HashMap<>());
+  public MainResponse createUser(RegistrationRequest registrationRequest) {
+    mainResponse.setErrors(new HashMap<>());
 
     if (userRepository.findByEmail(registrationRequest.getEmail()).isPresent()) {
-      registrationResponse.getErrors().put("email", "Этот e-mail уже зарегистрирован");
+      mainResponse.getErrors().put("email", "Этот e-mail уже зарегистрирован");
     }
     if (registrationRequest.getPassword().length() < 6) {
-      registrationResponse.getErrors().put("password", "Пароль короче 6-ти символов");
+      mainResponse.getErrors().put("password", "Пароль короче 6-ти символов");
     }
 
     Pattern namePattern = Pattern.compile("^[a-zA-Z]+[a-zA-Z_0-9]*[a-zA-Z0-9]+$");
     Matcher nameMatcher = namePattern.matcher(registrationRequest.getName());
     if (!nameMatcher.matches()) {
-      registrationResponse.getErrors().put("name", "Имя указано неверно");
+      mainResponse.getErrors().put("name", "Имя указано неверно");
     }
 
     Optional<CaptchaCode> captchaCode = captchaCodeRepository.findByCode(registrationRequest.getCaptcha());
     if (captchaCode.isEmpty()) {
-      registrationResponse.getErrors().put("captcha", "Код с картинки введён неверно");
+      mainResponse.getErrors().put("captcha", "Код с картинки введён неверно");
     }
 
-    if (registrationResponse.getErrors().size() ==0) {
+    if (mainResponse.getErrors().size() == 0) {
       userRepository.save(User.builder()
           .isModerator(false)
           .email(registrationRequest.getEmail())
@@ -82,10 +85,10 @@ public class UserService {
           .code(null)
           .photo(null)
           .build());
-      registrationResponse.setResult(true);
-      registrationResponse.setErrors(null);
+      mainResponse.setResult(true);
+      mainResponse.setErrors(null);
     }
-    return registrationResponse;
+    return mainResponse;
   }
 
 
@@ -126,15 +129,29 @@ public class UserService {
     return getLoginResponseFromEmail(user.getUsername());
   }
 
-  public UserStatisticResponse getMyStatistic(String userEmail) {
+  public StatisticResponse getMyStatistic(String userEmail) {
     User user = userRepository.findByEmail(userEmail).get();
 
-    return UserStatisticResponse.builder()
+    return StatisticResponse.builder()
         .postsCount(postRepository.getMyPosts(user.getId()))
-        .likesCount(postVoteRepository.getLikeCount(user.getId()))
-        .disLikesCount(postVoteRepository.getDislikeCount(user.getId()))
-        .viewsCount(postRepository.getTotalViewCount(user.getId()))
+        .likesCount(postVoteRepository.getMyLikeCount(user.getId()))
+        .dislikesCount(postVoteRepository.getMyDislikeCount(user.getId()))
+        .viewsCount(postRepository.getMyTotalViewCount(user.getId()))
         .firstPublication(ZonedDateTime.of(postRepository.getMyFirstPublication(user.getId()), ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000)
         .build();
+  }
+
+  public StatisticResponse getAllStatistic() {
+    if (globalSettingsService.getGlobalSettings().isSTATISTICS_IS_PUBLIC()) {
+      return StatisticResponse.builder()
+          .postsCount(Iterables.size(postRepository.findAll()))
+          .likesCount(postVoteRepository.getLikeCount())
+          .dislikesCount(postVoteRepository.getDislikeCount())
+          .viewsCount(postRepository.getTotalViewCount())
+          .firstPublication(ZonedDateTime.of(postRepository.getFirstPublication(), ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000)
+          .build();
+    } else {
+      return null;
+    }
   }
 }

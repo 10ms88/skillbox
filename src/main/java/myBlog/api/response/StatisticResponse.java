@@ -5,11 +5,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserStatisticResponse {
+public class StatisticResponse {
 
   private Integer postsCount;
   private Integer likesCount;
-  private Integer disLikesCount;
+  private Integer dislikesCount;
   private Integer viewsCount;
   private Long firstPublication;
 

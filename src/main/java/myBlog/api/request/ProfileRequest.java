@@ -12,19 +12,8 @@ public class ProfileRequest {
 
   private String name;
   private String email;
-  @Nullable
   private String password;
-  @Nullable
   private String removePhoto;
-  @Nullable
   private String photo;
-
-  public ProfileRequest(String name, String email) {
-    this.name = name;
-    this.email = email;
-    password = null;
-    removePhoto = null;
-    photo = null;
-  }
 
 }

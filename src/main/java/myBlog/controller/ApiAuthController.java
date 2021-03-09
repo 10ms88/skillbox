@@ -13,7 +13,7 @@ import myBlog.api.request.LoginRequest;
 import myBlog.api.request.RegistrationRequest;
 import myBlog.api.response.CaptchaCodeResponse;
 import myBlog.api.response.LoginResponse;
-import myBlog.api.response.RegistrationResponse;
+import myBlog.api.response.MainResponse;
 import myBlog.service.CaptchaService;
 import myBlog.service.UserService;
 
@@ -41,7 +41,7 @@ public class ApiAuthController {
   }
 
   @PostMapping("/register")
-  private ResponseEntity<RegistrationResponse> userRegistration(
+  private ResponseEntity<MainResponse> userRegistration(
       @RequestBody RegistrationRequest registrationRequest
   ) {
     return ResponseEntity.ok(userService.createUser(registrationRequest));
