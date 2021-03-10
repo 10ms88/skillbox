@@ -1,8 +1,10 @@
 package myBlog.controller;
 
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,12 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import myBlog.annotation.UserEmail;
+import myBlog.annotation.UserId;
 import myBlog.api.request.CommentRequest;
 import myBlog.api.request.ProfileRequest;
 import myBlog.api.response.CalendarResponse;
 import myBlog.api.response.CommentResponse;
 import myBlog.api.response.InitResponse;
+import myBlog.api.response.MainResponse;
 import myBlog.api.response.PostResponse;
 import myBlog.api.response.TagResponse;
 import myBlog.api.response.StatisticResponse;
@@ -93,19 +96,25 @@ public class ApiGeneralController {
 
   @PostMapping("/comment")
   private ResponseEntity<CommentResponse> postImage(@RequestBody CommentRequest commentRequest,
-      @UserEmail String userEmail) {
-    return ResponseEntity.ok(commentService.addComment(commentRequest, userEmail));
+      @UserId Integer userId) {
+    return ResponseEntity.ok(commentService.addComment(commentRequest, userId));
   }
 
-  @PostMapping("/profile/my")
-  private ResponseEntity<ProfileRequest> postImage(@RequestBody ProfileRequest profileRequest,
-      @UserEmail String userEmail) {
+  @PostMapping(path = "/profile/my", consumes = {MediaType.APPLICATION_JSON_VALUE})
+  private ResponseEntity<MainResponse> editProfile(@Valid @RequestBody ProfileRequest profileRequest,
+      @UserId Integer userId) {
+    return ResponseEntity.ok(userService.editProfile(profileRequest, userId));
+  }
+
+  @PostMapping(path = "/profile/my", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  private ResponseEntity<ProfileRequest> editAvatarProfile(@Valid @RequestBody ProfileRequest profileRequest,
+      @UserId Integer userId) {
     return ResponseEntity.ok(profileRequest);
   }
 
   @GetMapping("/statistics/my")
-  private ResponseEntity<StatisticResponse> getMyStatistic(@UserEmail String userEmail) {
-    return ResponseEntity.ok(userService.getMyStatistic(userEmail));
+  private ResponseEntity<StatisticResponse> getMyStatistic(@UserId Integer userId) {
+    return ResponseEntity.ok(userService.getMyStatistic(userId));
   }
 
   @GetMapping("/statistics/all")

@@ -10,7 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @Target({PARAMETER, TYPE})
 @Retention(RUNTIME)
-@AuthenticationPrincipal(expression = "username")
-public @interface UserEmail {
+@AuthenticationPrincipal(expression = "id")
+public @interface UserId {
 
 }

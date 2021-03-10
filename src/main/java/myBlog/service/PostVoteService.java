@@ -31,8 +31,8 @@ public class PostVoteService {
   private PostVoteRepository postVoteRepository;
 
 
-  public MainResponse addLike(PostVoteRequest postVoteRequest, String userEmail) {
-    Optional<PostVote> postVoteOptional = postVoteRepository.findPostVote(postVoteRequest.getPostId(), userRepository.findByEmail(userEmail).get());
+  public MainResponse addLike(PostVoteRequest postVoteRequest, Integer userId) {
+    Optional<PostVote> postVoteOptional = postVoteRepository.findPostVote(postVoteRequest.getPostId(), userRepository.findById(userId).get());
     if (postVoteOptional.isPresent()) {
       PostVote postVote = postVoteOptional.get();
       if (!postVote.getValue()) {
@@ -47,15 +47,15 @@ public class PostVoteService {
           .value(true)
           .voteTime(LocalDateTime.now())
           .post(postRepository.findById(postVoteRequest.getPostId()).get())
-          .user(userRepository.findByEmail(userEmail).get())
+          .user(userRepository.findById(userId).get())
           .build());
       mainResponse.setResult(true);
     }
     return mainResponse;
   }
 
-  public MainResponse addDislike(PostVoteRequest postVoteRequest, String userEmail) {
-    Optional<PostVote> postVoteOptional = postVoteRepository.findPostVote(postVoteRequest.getPostId(), userRepository.findByEmail(userEmail).get());
+  public MainResponse addDislike(PostVoteRequest postVoteRequest, Integer userId) {
+    Optional<PostVote> postVoteOptional = postVoteRepository.findPostVote(postVoteRequest.getPostId(), userRepository.findById(userId).get());
     if (postVoteOptional.isPresent()) {
       PostVote postVote = postVoteOptional.get();
       if (postVote.getValue()) {
@@ -70,7 +70,7 @@ public class PostVoteService {
           .value(false)
           .voteTime(LocalDateTime.now())
           .post(postRepository.findById(postVoteRequest.getPostId()).get())
-          .user(userRepository.findByEmail(userEmail).get())
+          .user(userRepository.findById(userId).get())
           .build());
       mainResponse.setResult(true);
     }

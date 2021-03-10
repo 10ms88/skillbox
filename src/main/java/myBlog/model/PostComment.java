@@ -2,6 +2,7 @@ package myBlog.model;
 
 
 import java.time.LocalDateTime;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,12 +32,12 @@ public class PostComment {
 
   private Integer parentId;
 
-  @ManyToOne
-  @JoinColumn(name = "post_id", updatable = false, insertable = false)
+  @ManyToOne (optional=false, cascade= CascadeType.ALL)
+  @JoinColumn(name = "post_id")
   private Post post;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", updatable = false, insertable = false)
+  @ManyToOne (optional=false, cascade= CascadeType.ALL)
+  @JoinColumn(name = "user_id")
   private User user;
 
   @Column(nullable = false)

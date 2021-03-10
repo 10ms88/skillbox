@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import myBlog.annotation.UserEmail;
+import myBlog.annotation.UserId;
 import myBlog.api.request.PostVoteRequest;
 import myBlog.api.request.ModerationRequest;
 import myBlog.api.request.PostRequest;
@@ -70,7 +70,7 @@ public class ApiPostController {
   @GetMapping("/post/{id}")
   private ResponseEntity<PostIdDto> getPostsById(
       @PathVariable("id") int id) {
-    return ResponseEntity.ok(postService.getPostsById(id));
+    return ResponseEntity.ok(postService.getPostById(id));
   }
 
   @GetMapping("/post/moderation")
@@ -78,10 +78,10 @@ public class ApiPostController {
       @RequestParam(required = false, defaultValue = "0") int offset,
       @RequestParam(required = false, defaultValue = "10") int limit,
       @RequestParam(required = false, defaultValue = "") String status,
-      @UserEmail String userEmail
+      @UserId Integer userId
   ) {
     Pageable pageable = PageRequest.of(offset / 10, limit);
-    return ResponseEntity.ok(postService.getModerationPosts(pageable, status, userEmail));
+    return ResponseEntity.ok(postService.getModerationPosts(pageable, status, userId));
   }
 
   @GetMapping("/post/my")
@@ -89,50 +89,50 @@ public class ApiPostController {
       @RequestParam(required = false, defaultValue = "0") int offset,
       @RequestParam(required = false, defaultValue = "10") int limit,
       @RequestParam(required = false, defaultValue = "") String status,
-      @UserEmail String userEmail
+      @UserId Integer userId
   ) {
     Pageable pageable = PageRequest.of(offset / 10, limit);
-    return ResponseEntity.ok(postService.getMyPosts(pageable, status, userEmail));
+    return ResponseEntity.ok(postService.getMyPosts(pageable, status, userId));
   }
 
   @PostMapping("/post")
   private ResponseEntity<MainResponse> addPost(
       @RequestBody PostRequest postRequest,
-      @UserEmail String userEmail
+      @UserId Integer userId
   ) {
-    return ResponseEntity.ok(postService.createPost(postRequest, userEmail));
+    return ResponseEntity.ok(postService.createPost(postRequest, userId));
   }
 
   @PutMapping("/post/{postId}")
   private ResponseEntity<MainResponse> updatePost(
       @RequestBody PostRequest postRequest,
-      @UserEmail String userEmail,
+      @UserId Integer userId,
       @PathVariable Integer postId
   ) {
-    return ResponseEntity.ok(postService.updatePost(postRequest, userEmail, postId));
+    return ResponseEntity.ok(postService.updatePost(postRequest, userId, postId));
   }
 
   @PostMapping("/moderation")
   private ResponseEntity<MainResponse> moderatePost(
       @RequestBody ModerationRequest moderationRequest,
-      @UserEmail String userEmail
+      @UserId Integer userId
   ) {
-    return ResponseEntity.ok(postService.moderatePost(moderationRequest, userEmail));
+    return ResponseEntity.ok(postService.moderatePost(moderationRequest, userId));
   }
 
   @PostMapping("/post/like")
   private ResponseEntity<MainResponse> addLike(
       @RequestBody PostVoteRequest postVoteRequest,
-      @UserEmail String userEmail
+      @UserId Integer userId
   ) {
-    return ResponseEntity.ok(postVoteService.addLike(postVoteRequest, userEmail));
+    return ResponseEntity.ok(postVoteService.addLike(postVoteRequest, userId));
   }
 
   @PostMapping("/post/dislike")
   private ResponseEntity<MainResponse> addDislike(
       @RequestBody PostVoteRequest postVoteRequest,
-      @UserEmail String userEmail
+      @UserId Integer userId
   ) {
-    return ResponseEntity.ok(postVoteService.addDislike(postVoteRequest, userEmail));
+    return ResponseEntity.ok(postVoteService.addDislike(postVoteRequest, userId));
   }
 }
