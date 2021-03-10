@@ -22,12 +22,13 @@ public class ImageService {
 
     String contentType = Objects.requireNonNull(image.getContentType()).substring(image.getContentType().lastIndexOf('/') + 1);
     if (contentType.equals("jpeg") || contentType.equals("png")) {
+      String prePath = "src/main/resources/static";
       String path = format("/upload/%s/", RandomStringUtils.randomAlphabetic(2).toLowerCase()) +
           format("%s/", RandomStringUtils.randomAlphabetic(2).toLowerCase()) +
           format("%s/", RandomStringUtils.randomAlphabetic(2).toLowerCase()) +
           image.getOriginalFilename();
 
-      FileUtils.writeByteArrayToFile(new File(path), image.getBytes());
+      FileUtils.writeByteArrayToFile(new File(prePath + path), image.getBytes());
       return path;
     } else {
       throw new FileTypeException();
