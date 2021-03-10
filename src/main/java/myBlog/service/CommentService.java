@@ -2,6 +2,7 @@ package myBlog.service;
 
 
 import java.time.LocalDateTime;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,19 +28,17 @@ public class CommentService {
   @Autowired
   private UserRepository userRepository;
 
-  public CommentResponse addComment(CommentRequest commentRequest, String userEmail) {
+  public CommentResponse addComment(CommentRequest commentRequest, Integer userId) {
     Post post = postRepository.findById(commentRequest.getPostId()).get();
-    User user = userRepository.findByEmail(userEmail).get();
+    User user = userRepository.findById(userId).get();
     if (commentRequest.getText().length() > 5) {
-      PostComment comment = commentRepository.save(PostComment.builder()
+       commentRepository.save(PostComment.builder()
           .post(post)
           .user(user)
           .parentId(commentRequest.getParentId())
           .commentTime(LocalDateTime.now())
           .text(commentRequest.getText())
           .build());
-      commentResponse.setCommentId(comment.getId());
-      commentRepository.update(post.getId(), user.getId(), comment.getId());
       return commentResponse;
     } else {
       throw new CommentException();

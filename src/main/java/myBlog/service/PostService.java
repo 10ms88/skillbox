@@ -103,18 +103,20 @@ public class PostService {
     return postResponse;
   }
 
-  public PostIdDto getPostsById(int id) {
-    return PostIdDto.of(postRepository.findById(id).get());
+  public PostIdDto getPostById(int id) {
+      Post post = postRepository.findById(id).get();
+      post.setViewCount(post.getViewCount() + 1);
+    return PostIdDto.of(postRepository.save(post));
   }
 
-  public PostResponse getModerationPosts(Pageable pageable, String status, String userEmail) {
+  public PostResponse getModerationPosts(Pageable pageable, String status, Integer userId) {
     postResponse.setPosts(new ArrayList<>());
     Page<Post> page = postRepository.findPostsForModeration(pageable);
     if (status.equals("new")) {
       postResponse.setCount((page.getTotalElements()));
       page.getContent().forEach(post -> postResponse.getPosts().add(PostDto.of(post)));
     } else {
-      page = postRepository.findModeratedPosts(status, userRepository.findByEmail(userEmail).get().getId(), pageable);
+      page = postRepository.findModeratedPosts(status, userRepository.findById(userId).get().getId(), pageable);
       postResponse.setCount((page.getTotalElements()));
       page.getContent().forEach(post -> postResponse.getPosts().add(PostDto.of(post))
       );
@@ -122,8 +124,8 @@ public class PostService {
     return postResponse;
   }
 
-  public PostResponse getMyPosts(Pageable pageable, String status, String userEmail) {
-    int userId = userRepository.findByEmail(userEmail).get().getId();
+  public PostResponse getMyPosts(Pageable pageable, String status, Integer uId) {
+    int userId = userRepository.findById(uId).get().getId();
     int isActive = 0;
     String moderationStatus = "%%";
 
@@ -149,7 +151,7 @@ public class PostService {
     return postResponse;
   }
 
-  public MainResponse createPost(PostRequest postRequest, String userEmail) {
+  public MainResponse createPost(PostRequest postRequest, Integer userId) {
     boolean isActive = false;
     Long timestampNow = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()).toInstant().toEpochMilli();
     mainResponse.setErrors(new HashMap<>());
@@ -181,7 +183,7 @@ public class PostService {
           .title(postRequest.getTitle())
           .viewCount(0)
           .moderator(null)
-          .user(userRepository.findByEmail(userEmail).get())
+          .user(userRepository.findById(userId).get())
           .build());
 
       findTagOrCreate(postRequest.getTags()).forEach(tag -> {
@@ -194,7 +196,7 @@ public class PostService {
     return mainResponse;
   }
 
-  public MainResponse updatePost(PostRequest postRequest, String userEmail, Integer postId) {
+  public MainResponse updatePost(PostRequest postRequest, Integer userId, Integer postId) {
     boolean isActive = false;
     Long timestampNow = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()).toInstant().toEpochMilli();
     mainResponse.setErrors(new HashMap<>());
@@ -231,7 +233,7 @@ public class PostService {
           .title(postRequest.getTitle())
           .viewCount(postRepository.findById(postId).get().getViewCount())
           .moderator(null)
-          .user(userRepository.findByEmail(userEmail).get())
+          .user(userRepository.findById(userId).get())
           .build());
       mainResponse.setResult(true);
       mainResponse.setErrors(null);
@@ -244,9 +246,9 @@ public class PostService {
     return mainResponse;
   }
 
-  public MainResponse moderatePost(ModerationRequest moderationRequest, String userEmail) {
+  public MainResponse moderatePost(ModerationRequest moderationRequest, Integer userId) {
     Post post = postRepository.findById(moderationRequest.getPostId()).get();
-    User user = userRepository.findByEmail(userEmail).get();
+    User user = userRepository.findById(userId).get();
     if (moderationRequest.getDecision().equals("accept")) {
       post.setModerationStatus(ModerationStatus.ACCEPTED);
     } else {

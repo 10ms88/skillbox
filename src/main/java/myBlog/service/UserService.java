@@ -21,17 +21,20 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import myBlog.api.request.LoginRequest;
+import myBlog.api.request.ProfileRequest;
 import myBlog.api.request.RegistrationRequest;
 import myBlog.api.response.LoginResponse;
 import myBlog.api.response.MainResponse;
 import myBlog.api.response.UserLoginResponse;
 import myBlog.api.response.StatisticResponse;
+import myBlog.exeption.ExistEmailException;
 import myBlog.model.CaptchaCode;
 import myBlog.model.User;
 import myBlog.repository.CaptchaCodeRepository;
 import myBlog.repository.PostRepository;
 import myBlog.repository.PostVoteRepository;
 import myBlog.repository.UserRepository;
+import myBlog.security.SecurityUser;
 
 @Service
 @AllArgsConstructor
@@ -124,13 +127,13 @@ public class UserService {
             new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
     SecurityContextHolder.getContext().setAuthentication(auth);
-    org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+    SecurityUser user = (SecurityUser) auth.getPrincipal();
 
     return getLoginResponseFromEmail(user.getUsername());
   }
 
-  public StatisticResponse getMyStatistic(String userEmail) {
-    User user = userRepository.findByEmail(userEmail).get();
+  public StatisticResponse getMyStatistic(Integer userId) {
+    User user = userRepository.findById(userId).get();
 
     return StatisticResponse.builder()
         .postsCount(postRepository.getMyPosts(user.getId()))
@@ -153,5 +156,24 @@ public class UserService {
     } else {
       return null;
     }
+  }
+
+  public MainResponse editProfile(ProfileRequest profileRequest, Integer userId) {
+    User user = userRepository.findById(userId).get();
+    if (userRepository.findByEmail(profileRequest.getEmail()).isEmpty() || user.getEmail().equals(profileRequest.getEmail())) {
+      user.setName(profileRequest.getName());
+      user.setEmail(profileRequest.getEmail());
+      if (profileRequest.getPassword() != null) {
+        user.setPassword(BCrypt.hashpw(profileRequest.getPassword(), BCrypt.gensalt()));
+      }
+      if (profileRequest.getRemovePhoto().equals("1") && profileRequest.getPhoto().length() == 0) {
+        user.setPhoto(null);
+      }
+      userRepository.save(user);
+      mainResponse.setResult(true);
+    } else {
+      throw new ExistEmailException();
+    }
+    return mainResponse;
   }
 }

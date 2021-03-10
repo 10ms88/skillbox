@@ -30,6 +30,12 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     return new ResponseEntity<>(new NewException(false, errors), HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(value = ExistEmailException.class)
+  protected ResponseEntity<NewException> handleExistEmailException() {
+    HashMap<String, String> errors = new HashMap<>();
+    errors.put("email", "Этот e-mail уже зарегистрирован");
+    return new ResponseEntity<>(new NewException(false, errors), HttpStatus.BAD_REQUEST);
+  }
 
   @ExceptionHandler(value = CommentException.class)
   protected ResponseEntity<NewException> handleCommentException() {
@@ -37,6 +43,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     errors.put("text", "Текст комментария не задан или слишком короткий");
     return new ResponseEntity<>(new NewException(false, errors), HttpStatus.BAD_REQUEST);
   }
+
   @ExceptionHandler(value = SpelEvaluationException.class)
   protected ResponseEntity<NewException> handleSpelEvaluationException() {
     HashMap<String, String> errors = new HashMap<>();

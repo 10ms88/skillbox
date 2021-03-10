@@ -1,15 +1,13 @@
 package myBlog.api.request;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
-import org.springframework.lang.Nullable;
 
 @Data
 @Jacksonized
-@RequiredArgsConstructor
+@Builder
 public class ProfileRequest {
-
   private String name;
   private String email;
   private String password;
