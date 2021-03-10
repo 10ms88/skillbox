@@ -23,8 +23,8 @@ import myBlog.api.response.CommentResponse;
 import myBlog.api.response.InitResponse;
 import myBlog.api.response.MainResponse;
 import myBlog.api.response.PostResponse;
-import myBlog.api.response.TagResponse;
 import myBlog.api.response.StatisticResponse;
+import myBlog.api.response.TagResponse;
 import myBlog.dto.GlobalSettingsDto;
 import myBlog.service.CalendarService;
 import myBlog.service.CommentService;
@@ -47,7 +47,6 @@ public class ApiGeneralController {
   private final ImageService imageService;
   private final CommentService commentService;
   private final UserService userService;
-
 
   @GetMapping("/tag")
   private ResponseEntity<TagResponse> tagResponseEntity(@RequestParam(defaultValue = "") String query) {
@@ -89,13 +88,13 @@ public class ApiGeneralController {
     return ResponseEntity.ok(calendarService.getPostByYear(year));
   }
 
-  @PostMapping("/image")
-  private String postImage(@RequestParam MultipartFile image) throws Exception {
+  @PostMapping(path = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  private String postImage(@RequestBody MultipartFile image) throws Exception {
     return imageService.saveImage(image);
   }
 
   @PostMapping("/comment")
-  private ResponseEntity<CommentResponse> postImage(@RequestBody CommentRequest commentRequest,
+  private ResponseEntity<CommentResponse> addComment(@RequestBody CommentRequest commentRequest,
       @UserId Integer userId) {
     return ResponseEntity.ok(commentService.addComment(commentRequest, userId));
   }
@@ -103,6 +102,7 @@ public class ApiGeneralController {
   @PostMapping(path = "/profile/my", consumes = {MediaType.APPLICATION_JSON_VALUE})
   private ResponseEntity<MainResponse> editProfile(@Valid @RequestBody ProfileRequest profileRequest,
       @UserId Integer userId) {
+
     return ResponseEntity.ok(userService.editProfile(profileRequest, userId));
   }
 
