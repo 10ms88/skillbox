@@ -51,6 +51,12 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     return new ResponseEntity<>(new NewException(false, errors), HttpStatus.UNAUTHORIZED);
   }
 
+  @ExceptionHandler(value = PasswordLengthException.class)
+  protected ResponseEntity<NewException> handlePasswordLengthException() {
+    HashMap<String, String> errors = new HashMap<>();
+    errors.put("password", "Пароль короче 6-ти символов");
+    return new ResponseEntity<>(new NewException(false, errors), HttpStatus.BAD_REQUEST);
+  }
 
 
 
