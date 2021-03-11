@@ -102,13 +102,15 @@ public class ApiGeneralController {
   @PostMapping(path = "/profile/my", consumes = {MediaType.APPLICATION_JSON_VALUE})
   private ResponseEntity<MainResponse> editProfile(@Valid @RequestBody ProfileRequest profileRequest,
       @UserId Integer userId) {
-
+    System.out.println("1");
     return ResponseEntity.ok(userService.editProfile(profileRequest, userId));
   }
 
-  @PostMapping(path = "/profile/my", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  @PostMapping(value = "/profile/my", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   private ResponseEntity<ProfileRequest> editAvatarProfile(@Valid @RequestBody ProfileRequest profileRequest,
       @UserId Integer userId) {
+    System.out.println("2");
+
     return ResponseEntity.ok(profileRequest);
   }
 

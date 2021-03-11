@@ -28,6 +28,7 @@ import myBlog.api.response.MainResponse;
 import myBlog.api.response.UserLoginResponse;
 import myBlog.api.response.StatisticResponse;
 import myBlog.exeption.ExistEmailException;
+import myBlog.exeption.PasswordLengthException;
 import myBlog.model.CaptchaCode;
 import myBlog.model.User;
 import myBlog.repository.CaptchaCodeRepository;
@@ -163,11 +164,15 @@ public class UserService {
     if (userRepository.findByEmail(profileRequest.getEmail()).isEmpty() || user.getEmail().equals(profileRequest.getEmail())) {
       user.setName(profileRequest.getName());
       user.setEmail(profileRequest.getEmail());
-      if (profileRequest.getPassword() != null) {
+      if (profileRequest.getPassword() != null && profileRequest.getPassword().length() >= 6) {
         user.setPassword(BCrypt.hashpw(profileRequest.getPassword(), BCrypt.gensalt()));
+      } else {
+        throw new PasswordLengthException();
       }
-      if (profileRequest.getRemovePhoto().equals("1") && profileRequest.getPhoto().length() == 0) {
-        user.setPhoto(null);
+      if (profileRequest.getRemovePhoto() != null) {
+        if (profileRequest.getRemovePhoto().equals("1") && profileRequest.getPhoto().length() == 0) {
+          user.setPhoto(null);
+        }
       }
       userRepository.save(user);
       mainResponse.setResult(true);
