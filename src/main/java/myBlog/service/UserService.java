@@ -75,7 +75,7 @@ public class UserService {
     }
 
     Optional<CaptchaCode> captchaCode = captchaCodeRepository.findByCode(registrationRequest.getCaptcha());
-    if (captchaCode.isEmpty()) {
+    if (!captchaCode.isPresent()) {
       mainResponse.getErrors().put("captcha", "Код с картинки введён неверно");
     }
 
@@ -161,7 +161,7 @@ public class UserService {
 
   public MainResponse editProfile(ProfileRequest profileRequest, Integer userId) {
     User user = userRepository.findById(userId).get();
-    if (userRepository.findByEmail(profileRequest.getEmail()).isEmpty() || user.getEmail().equals(profileRequest.getEmail())) {
+    if (!userRepository.findByEmail(profileRequest.getEmail()).isPresent() || user.getEmail().equals(profileRequest.getEmail())) {
       user.setName(profileRequest.getName());
       user.setEmail(profileRequest.getEmail());
       if (profileRequest.getPassword() != null && profileRequest.getPassword().length() >= 6) {
