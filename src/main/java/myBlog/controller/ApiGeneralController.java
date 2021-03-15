@@ -1,5 +1,7 @@
 package myBlog.controller;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import myBlog.annotation.UserId;
 import myBlog.api.request.CommentRequest;
+import myBlog.api.request.ProfilePhotoRequest;
 import myBlog.api.request.ProfileRequest;
 import myBlog.api.response.CalendarResponse;
 import myBlog.api.response.CommentResponse;
@@ -90,8 +94,10 @@ public class ApiGeneralController {
   }
 
   @PostMapping(path = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  private String postImage(@RequestBody MultipartFile image, HttpServletRequest request) throws Exception {
-    return imageService.saveImage(image, request);
+  private String postImage(@RequestBody MultipartFile image,
+      HttpServletRequest request
+  ) throws Exception {
+    return imageService.saveImage(image, request, 400);
   }
 
   @PostMapping("/comment")
@@ -102,14 +108,18 @@ public class ApiGeneralController {
 
   @PostMapping(path = "/profile/my", consumes = {MediaType.APPLICATION_JSON_VALUE})
   private ResponseEntity<MainResponse> editProfile(@Valid @RequestBody ProfileRequest profileRequest,
-      @UserId Integer userId) {
-    return ResponseEntity.ok(userService.editProfile(profileRequest, userId));
+      @UserId Integer userId) throws InterruptedException {
+    MainResponse mainResponse = userService.editProfile(profileRequest, userId);
+    TimeUnit.SECONDS.sleep(5);
+    return ResponseEntity.ok(mainResponse);
   }
 
-  @PostMapping(value = "/profile/my", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  private ResponseEntity<ProfileRequest> editAvatarProfile(@Valid @RequestBody ProfileRequest profileRequest,
-      @UserId Integer userId) {
-    return ResponseEntity.ok(profileRequest);
+  @PostMapping(path = "/profile/my", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  private ResponseEntity<MainResponse> editPhotoProfile(
+      @Valid @ModelAttribute ProfilePhotoRequest profilePhotoRequest,
+      @UserId Integer userId,
+      HttpServletRequest request) throws IOException, InterruptedException {
+    return ResponseEntity.ok(userService.editPhotoProfile(profilePhotoRequest, userId, request));
   }
 
   @GetMapping("/statistics/my")

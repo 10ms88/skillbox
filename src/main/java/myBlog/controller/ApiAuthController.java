@@ -1,6 +1,7 @@
 package myBlog.controller;
 
 import java.security.Principal;
+import javax.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import myBlog.api.request.ChangePasswordRequest;
 import myBlog.api.request.LoginRequest;
+import myBlog.api.request.ProfileRequest;
 import myBlog.api.request.RegistrationRequest;
 import myBlog.api.response.CaptchaCodeResponse;
 import myBlog.api.response.LoginResponse;
@@ -58,4 +61,21 @@ public class ApiAuthController {
     loginResponse.setResult(true);
     return ResponseEntity.ok(loginResponse);
   }
+
+
+  @PostMapping("/restore")
+  private ResponseEntity<MainResponse> restorePassword(@RequestBody ProfileRequest profileRequest,
+      HttpServletRequest request) {
+    return ResponseEntity.ok(userService.restorePassword(profileRequest.getEmail(), request));
+  }
+
+
+  @PostMapping("/password")
+  private ResponseEntity<MainResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest,
+      HttpServletRequest request) {
+    return ResponseEntity.ok(userService.changePassword(changePasswordRequest));
+  }
+
+
+
 }
