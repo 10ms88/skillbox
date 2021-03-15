@@ -22,7 +22,7 @@ public class CaptchaService {
   public CaptchaCodeResponse getCaptchaCode() {
     captchaCodeRepository.deleteOldCaptchaCode();
     Cage cage = new GCage();
-    String captcha = cage.getTokenGenerator().next();
+    String captcha = cage.getTokenGenerator().next().substring(5);
     String secret = cage.getTokenGenerator().next();
     byte[] decodedBytes = cage.draw(captcha);
     String encodedString = Base64.getEncoder().encodeToString(decodedBytes);
