@@ -130,15 +130,24 @@ public class UserService {
   }
 
   public LoginResponse setAuthentication(LoginRequest loginRequest) {
-    Authentication auth = authenticationManager
-        .authenticate(
-            new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-
-    SecurityContextHolder.getContext().setAuthentication(auth);
-    SecurityUser user = (SecurityUser) auth.getPrincipal();
-
-    return getLoginResponseFromEmail(user.getUsername());
+    Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
+    LoginResponse loginResponse = new LoginResponse();
+    loginResponse.setResult(false);
+    if (optionalUser.isPresent()) {
+      User user = optionalUser.get();
+      boolean passwordMatcher = BCrypt.checkpw(loginRequest.getPassword(), user.getPassword());
+      if (passwordMatcher) {
+        Authentication auth = authenticationManager
+            .authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        SecurityUser securityUser = (SecurityUser) auth.getPrincipal();
+        loginResponse = getLoginResponseFromEmail(securityUser.getUsername());
+      }
+    }
+    return loginResponse;
   }
+
 
   public StatisticResponse getMyStatistic(Integer userId) {
     User user = userRepository.findById(userId).get();
@@ -252,11 +261,11 @@ public class UserService {
     }
 
     if (!optionalUser.isPresent()) {
-      mainResponse.getErrors().put("code", "Ссылка для восстановления пароля устарела. <a href="  + "/auth/restore" + " >Запросить ссылку снова</a> ");
+      mainResponse.getErrors().put("code", "Ссылка для восстановления пароля устарела. <a href=" + "/auth/restore" + " >Запросить ссылку снова</a> ");
     }
 
     if (!changePasswordRequest.getCaptchaSecret().equals(changePasswordRequest.getCaptcha())) {
-        mainResponse.getErrors().put("captcha", "Код с картинки введён неверно");
+      mainResponse.getErrors().put("captcha", "Код с картинки введён неверно");
     }
 
     if (mainResponse.getErrors().size() == 0 && optionalUser.isPresent()) {
