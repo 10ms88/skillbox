@@ -59,7 +59,6 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
   }
 
 
-
   @Data
   @AllArgsConstructor
   private static class NewException {

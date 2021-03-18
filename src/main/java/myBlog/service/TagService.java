@@ -27,6 +27,9 @@ public class TagService {
 
   public TagResponse getTagList(String name) {
     List<Tag> tagList = tagRepository.findAllByStartWith(name + "%");
+
+    if (tagList.size() != 0) {
+
     tagResponse.setTags(new ArrayList<>());
     List<Integer> listPostCount = new ArrayList<>();
     for (Tag tag : tagList) {
@@ -52,6 +55,7 @@ public class TagService {
     for (Tag tag : tagList) {
       weight = (double) tag.getPostList().size() / count * k;
       tagResponse.getTags().add(TagDto.of(tag.getName(), weight));
+    }
     }
     return tagResponse;
   }

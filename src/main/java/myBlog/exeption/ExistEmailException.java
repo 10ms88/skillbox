@@ -1,5 +1,5 @@
 package myBlog.exeption;
 
-public class ExistEmailException extends RuntimeException{
+public class ExistEmailException extends RuntimeException {
 
 }

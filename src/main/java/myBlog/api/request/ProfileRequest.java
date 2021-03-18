@@ -8,6 +8,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Builder
 public class ProfileRequest {
+
   private String name;
   private String email;
   private String password;

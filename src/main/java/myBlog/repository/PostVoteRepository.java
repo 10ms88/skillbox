@@ -31,5 +31,5 @@ public interface PostVoteRepository extends CrudRepository<PostVote, Integer> {
 
   @Query(value = "SELECT * FROM post_votes where post_id = ?1 and user_id = ?2",
       nativeQuery = true)
-  Optional <PostVote> findPostVote(int postId, User user);
+  Optional<PostVote> findPostVote(int postId, User user);
 }

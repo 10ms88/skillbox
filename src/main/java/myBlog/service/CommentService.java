@@ -2,7 +2,7 @@ package myBlog.service;
 
 
 import java.time.LocalDateTime;
-import javax.persistence.criteria.CriteriaBuilder.In;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +31,14 @@ public class CommentService {
   public CommentResponse addComment(CommentRequest commentRequest, Integer userId) {
     Post post = postRepository.findById(commentRequest.getPostId()).get();
     User user = userRepository.findById(userId).get();
+
     if (commentRequest.getText().length() > 5) {
-       commentRepository.save(PostComment.builder()
+      commentRepository.save(PostComment.builder()
           .post(post)
           .user(user)
           .parentId(commentRequest.getParentId())
           .commentTime(LocalDateTime.now())
-          .text(commentRequest.getText())
+          .text(Jsoup.parse(commentRequest.getText()).text())
           .build());
       return commentResponse;
     } else {

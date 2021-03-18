@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import myBlog.annotation.UserId;
-import myBlog.api.request.PostVoteRequest;
 import myBlog.api.request.ModerationRequest;
 import myBlog.api.request.PostRequest;
-import myBlog.api.response.PostResponse;
+import myBlog.api.request.PostVoteRequest;
 import myBlog.api.response.MainResponse;
+import myBlog.api.response.PostResponse;
 import myBlog.dto.PostIdDto;
-import myBlog.service.PostVoteService;
 import myBlog.service.PostService;
+import myBlog.service.PostVoteService;
 
 @RestController
 @RequestMapping("/api")

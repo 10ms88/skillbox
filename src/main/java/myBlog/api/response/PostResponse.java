@@ -8,6 +8,6 @@ import myBlog.dto.PostDto;
 @Data
 public class PostResponse {
 
-    private Long count;
-    private List<PostDto> posts;
+  private Long count;
+  private List<PostDto> posts;
 }

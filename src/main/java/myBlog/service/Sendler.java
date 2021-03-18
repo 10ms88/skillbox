@@ -1,8 +1,12 @@
 package myBlog.service;
 
 import java.util.Properties;
-
-import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -23,7 +27,7 @@ public class Sendler {
     props.put("mail.smtp.port", "587");
   }
 
-  public  void send(String subject, String text, String toEmail) {
+  public void send(String subject, String text, String toEmail) {
     Session session = Session.getInstance(props, new Authenticator() {
       protected PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(username, password);
