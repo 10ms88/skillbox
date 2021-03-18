@@ -1,6 +1,7 @@
 package myBlog.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -31,6 +32,7 @@ import myBlog.api.response.PostResponse;
 import myBlog.api.response.StatisticResponse;
 import myBlog.api.response.TagResponse;
 import myBlog.dto.GlobalSettingsDto;
+import myBlog.model.Tag;
 import myBlog.service.CalendarService;
 import myBlog.service.CommentService;
 import myBlog.service.GlobalSettingsService;
@@ -55,6 +57,9 @@ public class ApiGeneralController {
 
   @GetMapping("/tag")
   private ResponseEntity<TagResponse> tagResponseEntity(@RequestParam(defaultValue = "") String query) {
+    List<Tag> tagList = null;
+
+
     return ResponseEntity.ok(tagService.getTagList(query));
   }
 

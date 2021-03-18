@@ -30,8 +30,8 @@ import myBlog.api.request.ProfileRequest;
 import myBlog.api.request.RegistrationRequest;
 import myBlog.api.response.LoginResponse;
 import myBlog.api.response.MainResponse;
-import myBlog.api.response.UserLoginResponse;
 import myBlog.api.response.StatisticResponse;
+import myBlog.api.response.UserLoginResponse;
 import myBlog.exeption.ExistEmailException;
 import myBlog.exeption.PasswordLengthException;
 import myBlog.model.CaptchaCode;
@@ -194,10 +194,12 @@ public class UserService {
         } else {
           throw new PasswordLengthException();
         }
-        if (profileRequest.getRemovePhoto().equals("1")) {
-          user.setPhoto(null);
-          userRepository.save(user);
-          mainResponse.setResult(true);
+        if (profileRequest.getRemovePhoto() != null) {
+          if (profileRequest.getRemovePhoto().equals("1")) {
+            user.setPhoto(null);
+            userRepository.save(user);
+            mainResponse.setResult(true);
+          }
         }
       }
 
@@ -240,11 +242,11 @@ public class UserService {
       User user = optionalUser.get();
       String code = RandomStringUtils.randomAlphanumeric(45).toLowerCase();
       user.setCode(code);
-      String server = request.getRequestURL().substring(0, request.getRequestURI().length());
-      String port = Integer.toString(request.getServerPort());
-      String url = server + port + "/login/change-password/" + code;
+      String url = request.getRequestURL().substring(0, request.getRequestURL().length() - request.getRequestURI().length())
+          + "/login/change-password/"
+          + code;
       Sendler sendler = new Sendler("10ms88job@gmail.com", "Misha9898!");
-      sendler.send("Восстанвление пароля на портале 'DevPub'", url, email);
+      sendler.send("Restore password from 'DevPub'",  url  , email);
       userRepository.save(user);
       mainResponse.setResult(true);
     }

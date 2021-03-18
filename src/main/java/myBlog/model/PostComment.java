@@ -32,11 +32,11 @@ public class PostComment {
 
   private Integer parentId;
 
-  @ManyToOne (optional=false, cascade= CascadeType.ALL)
+  @ManyToOne(optional = false, cascade = CascadeType.ALL)
   @JoinColumn(name = "post_id")
   private Post post;
 
-  @ManyToOne (optional=false, cascade= CascadeType.ALL)
+  @ManyToOne(optional = false, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id")
   private User user;
 

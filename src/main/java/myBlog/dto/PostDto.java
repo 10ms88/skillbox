@@ -40,17 +40,18 @@ public class PostDto {
   }
 
   private static List<PostVote> getLikeList(Post post) {
-    List<PostVote>  likeList = new ArrayList<>();
-    for (int i = 0; i < post.getPostVoteList().size(); i++ ) {
-        if (post.getPostVoteList().get(i).getValue()) {
+    List<PostVote> likeList = new ArrayList<>();
+    for (int i = 0; i < post.getPostVoteList().size(); i++) {
+      if (post.getPostVoteList().get(i).getValue()) {
         likeList.add(post.getPostVoteList().get(i));
       }
     }
     return likeList;
   }
+
   private static List<PostVote> getDisLikeList(Post post) {
-    List<PostVote>  disLikeList = new ArrayList<>();
-    for (int i = 0; i < post.getPostVoteList().size(); i++ ) {
+    List<PostVote> disLikeList = new ArrayList<>();
+    for (int i = 0; i < post.getPostVoteList().size(); i++) {
       if (!post.getPostVoteList().get(i).getValue()) {
         disLikeList.add(post.getPostVoteList().get(i));
       }

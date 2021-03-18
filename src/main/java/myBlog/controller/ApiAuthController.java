@@ -1,9 +1,12 @@
 package myBlog.controller;
 
 import java.security.Principal;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +50,7 @@ public class ApiAuthController {
   private ResponseEntity<MainResponse> userRegistration(
       @RequestBody RegistrationRequest registrationRequest
   ) {
+
     return ResponseEntity.ok(userService.createUser(registrationRequest));
   }
 
@@ -56,9 +60,19 @@ public class ApiAuthController {
   }
 
   @GetMapping("/logout")
-  private ResponseEntity<LoginResponse> logout() {
+  private ResponseEntity<LoginResponse> logout(HttpServletRequest request) throws Exception {
+    HttpSession session = request.getSession(false);
+    SecurityContextHolder.clearContext();
+    session = request.getSession(false);
+    if (session != null) {
+      session.invalidate();
+    }
+    for (Cookie cookie : request.getCookies()) {
+      cookie.setMaxAge(0);
+    }
     LoginResponse loginResponse = new LoginResponse();
     loginResponse.setResult(true);
+
     return ResponseEntity.ok(loginResponse);
   }
 
@@ -75,7 +89,6 @@ public class ApiAuthController {
       HttpServletRequest request) {
     return ResponseEntity.ok(userService.changePassword(changePasswordRequest));
   }
-
 
 
 }

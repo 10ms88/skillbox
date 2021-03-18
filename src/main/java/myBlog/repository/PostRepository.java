@@ -18,7 +18,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       + "FROM publication_time) AS year "
       + "FROM posts "
       + "WHERE is_active = 1 AND moderation_status = 'ACCEPTED' "
-      + "AND publication_time <= current_date()"
+      + "AND publication_time <= localtime()"
       + "GROUP BY  year "
       + "ORDER BY  year asc",
       nativeQuery = true)
@@ -30,7 +30,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       + "FROM posts\n"
       + "WHERE is_active = 1\n"
       + "AND moderation_status = 'ACCEPTED'\n"
-      + "AND publication_time <= current_date()\n"
+      + "AND publication_time <= localtime()\n"
       + "AND publication_time\n"
       + "BETWEEN ?1\n"
       + "AND ?2\n"
@@ -43,7 +43,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       + "FROM posts\n"
       + "WHERE publication_time BETWEEN ?1 AND ?2\n"
       + "AND is_active = 1 AND moderation_status = 'ACCEPTED' "
-      + "AND publication_time <= current_date()"
+      + "AND publication_time <= localtime()"
       + "GROUP BY id",
       nativeQuery = true)
   Page<Post> findPostsByDate(String dayStart, String dayEnd, Pageable pageable);
@@ -52,21 +52,21 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
   @Query(value = "SELECT * FROM posts "
       + "WHERE concat(text,title) LIKE ?1 "
       + "AND is_active = 1 AND moderation_status = 'ACCEPTED' "
-      + "AND publication_time <= current_date()",
+      + "AND publication_time <= localtime()",
       nativeQuery = true)
   Page<Post> findPostsBySearchQuery(String query, Pageable pageable);
 
 
   @Query(value = "SELECT * FROM posts "
       + "WHERE is_active = 1     AND moderation_status = 'ACCEPTED'   "
-      + "AND publication_time <= current_date()   "
+      + "AND publication_time <= localtime()   "
       + "ORDER BY publication_time DESC",
       nativeQuery = true)
   Page<Post> findPostsOrderByDateDesc(Pageable pageable);
 
   @Query(value = "SELECT * FROM posts "
       + "WHERE is_active = 1     AND moderation_status = 'ACCEPTED'   "
-      + "AND publication_time <= current_date()   "
+      + "AND publication_time <= localtime()   "
       + "ORDER BY publication_time ASC",
       nativeQuery = true)
   Page<Post> findPostsOrderByDateAsc(Pageable pageable);
@@ -77,7 +77,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       + "LEFT JOIN post_comments  ON post_comments.post_id = posts.id    "
       + "LEFT JOIN post_votes  ON post_votes.post_id = posts.id AND post_votes.value = 1    "
       + "WHERE is_active = 1     AND moderation_status = 'ACCEPTED'   "
-      + "AND publication_time <= current_date()   "
+      + "AND publication_time <= localtime()   "
       + "GROUP BY posts.id "
       + "ORDER BY count(post_votes.value) DESC",
       nativeQuery = true)
@@ -88,7 +88,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       + "LEFT JOIN post_comments  ON post_comments.post_id = posts.id    "
       + "LEFT JOIN post_votes  ON post_votes.post_id = posts.id AND post_votes.value = 1    "
       + "WHERE is_active = 1 AND moderation_status = 'ACCEPTED'   "
-      + "AND publication_time <= current_date()   "
+      + "AND publication_time <= localtime()   "
       + "GROUP BY posts.id "
       + "ORDER BY count(post_comments.id) DESC",
       nativeQuery = true)
@@ -100,7 +100,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
       + "LEFT JOIN tags ON tags.id = tag2post.tag_id\n"
       + "WHERE is_active = 1\n"
       + "  AND moderation_status = 'ACCEPTED'\n"
-      + "  AND publication_time <= current_date()\n"
+      + "  AND publication_time <= localtime()\n"
       + "  AND tags.name like ?1",
       nativeQuery = true)
   Page<Post> findPostsByTag(String tag, Pageable pageable);

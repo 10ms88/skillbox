@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +17,8 @@ import org.springframework.stereotype.Service;
 
 import myBlog.api.request.ModerationRequest;
 import myBlog.api.request.PostRequest;
-import myBlog.api.response.PostResponse;
 import myBlog.api.response.MainResponse;
+import myBlog.api.response.PostResponse;
 import myBlog.dto.PostDto;
 import myBlog.dto.PostIdDto;
 import myBlog.enumuration.ModerationStatus;
@@ -104,8 +105,8 @@ public class PostService {
   }
 
   public PostIdDto getPostById(int id) {
-      Post post = postRepository.findById(id).get();
-      post.setViewCount(post.getViewCount() + 1);
+    Post post = postRepository.findById(id).get();
+    post.setViewCount(post.getViewCount() + 1);
     return PostIdDto.of(postRepository.save(post));
   }
 
@@ -160,7 +161,7 @@ public class PostService {
     if (postRequest.getTitle().length() < 3) {
       mainResponse.getErrors().put("title", "Заголовок не установлен");
     }
-    if (postRequest.getText().length() < 151) {
+    if (Jsoup.parse(postRequest.getText()).text().length() < 151) {
       mainResponse.getErrors().put("text", "Текст публикации слишком короткий");
     }
     if (postRequest.getTimestamp() < timestampNow) {
@@ -179,7 +180,7 @@ public class PostService {
           .isActive(isActive)
           .moderationStatus(ModerationStatus.NEW)
           .publicationTime(publicationTime)
-          .text(postRequest.getText())
+          .text(Jsoup.parse(postRequest.getText()).text())
           .title(postRequest.getTitle())
           .viewCount(0)
           .moderator(null)
@@ -215,10 +216,6 @@ public class PostService {
     if (postRequest.getTimestamp() < timestampNow) {
       postRequest.setTimestamp(timestampNow);
     }
-    LocalDateTime publicationTime =
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(postRequest.getTimestamp()),
-            TimeZone.getDefault().toZoneId());
-
     if (postRequest.getActive() == 1) {
       isActive = true;
     }
@@ -228,12 +225,12 @@ public class PostService {
           .id(postId)
           .isActive(isActive)
           .moderationStatus(ModerationStatus.NEW)
-          .publicationTime(publicationTime)
-          .text(postRequest.getText())
+          .publicationTime(postRepository.findById(postId).get().getPublicationTime())
+          .text(Jsoup.parse(postRequest.getText()).text())
           .title(postRequest.getTitle())
           .viewCount(postRepository.findById(postId).get().getViewCount())
           .moderator(null)
-          .user(userRepository.findById(userId).get())
+          .user(postRepository.findById(postId).get().getUser())
           .build());
       mainResponse.setResult(true);
       mainResponse.setErrors(null);

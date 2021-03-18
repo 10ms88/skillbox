@@ -16,14 +16,14 @@ public class PostCommentDto {
   private final int id;
   private final Long timestamp;
   private final String text;
-  private final List<UserCommentDto> user;
+  private final UserCommentDto user;
 
   public static PostCommentDto of(PostComment postComment) {
     return PostCommentDto.builder()
         .id(postComment.getId())
         .timestamp(ZonedDateTime.of(postComment.getCommentTime(), ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000)
         .text(postComment.getText())
-        .user(getUserList(postComment))
+        .user(UserCommentDto.of(postComment.getUser()))
         .build();
   }
 
