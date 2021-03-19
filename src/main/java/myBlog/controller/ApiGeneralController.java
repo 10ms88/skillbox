@@ -103,7 +103,7 @@ public class ApiGeneralController {
       HttpServletRequest request
   ) throws Exception {
     return imageService.saveImage(image, request, 400);
-  }
+      }
 
   @PostMapping("/comment")
   private ResponseEntity<CommentResponse> addComment(@RequestBody CommentRequest commentRequest,

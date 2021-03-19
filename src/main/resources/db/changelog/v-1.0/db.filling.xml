@@ -6,7 +6,16 @@
   <changeSet author="MIS (generated)" id="1612804340088-25">
     <sql>
       INSERT users (code, email, is_moderator, name, password, photo, registration_time)
-      VALUES (null,'mmmsss.88@mail.ru', 1, 'Михаил', '$2a$10$P462TN.h3eIPB7aO96mkk.9AftXYGxmJaVBDg/soZlATZTchmXCZW', null, localtime())
+      VALUES (null,'mmmsss.88@mail.ru', 1, 'Михаил', '$2a$10$P462TN.h3eIPB7aO96mkk.9AftXYGxmJaVBDg/soZlATZTchmXCZW',
+      null, localtime())
+    </sql>
+  </changeSet>
+
+  <changeSet author="MIS (generated)" id="1612804340088-26">
+    <sql>
+      INSERT global_settings (code, name, value) VALUES ('MULTIUSER_MODE', 'Многопользовательский режим', 'YES'),
+      ('POST_PREMODERATION', 'Премодерация постов', 'NO'), ('STATISTICS_IS_PUBLIC', 'Показывать всем статистику
+      блога', 'YES')
     </sql>
   </changeSet>
 
