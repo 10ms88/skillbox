@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
+import javax.lang.model.element.Element;
 import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -175,12 +177,13 @@ public class PostService {
       isActive = true;
     }
 
+
     if (mainResponse.getErrors().size() == 0) {
       Post post = postRepository.save(Post.builder()
           .isActive(isActive)
           .moderationStatus(ModerationStatus.NEW)
           .publicationTime(publicationTime)
-          .text(Jsoup.parse(postRequest.getText()).text())
+          .text(postRequest.getText())
           .title(postRequest.getTitle())
           .viewCount(0)
           .moderator(null)
@@ -226,7 +229,7 @@ public class PostService {
           .isActive(isActive)
           .moderationStatus(ModerationStatus.NEW)
           .publicationTime(postRepository.findById(postId).get().getPublicationTime())
-          .text(Jsoup.parse(postRequest.getText()).text())
+          .text(postRequest.getText())
           .title(postRequest.getTitle())
           .viewCount(postRepository.findById(postId).get().getViewCount())
           .moderator(null)

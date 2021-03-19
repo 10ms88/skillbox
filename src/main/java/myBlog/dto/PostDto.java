@@ -8,6 +8,8 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
+import org.jsoup.Jsoup;
+
 import myBlog.model.Post;
 import myBlog.model.PostVote;
 
@@ -31,7 +33,7 @@ public class PostDto {
         .timestamp(ZonedDateTime.of(post.getPublicationTime(), ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000)
         .user(UserDto.of(post.getUser()))
         .title(post.getTitle())
-        .announce(post.getText().substring(0, 150) + "...")
+        .announce(Jsoup.parse(post.getText()).text().substring(0, 150) + "...")
         .likeCount(getLikeList(post).size())
         .dislikeCount(getDisLikeList(post).size())
         .commentCount(post.getPostCommentList().size())

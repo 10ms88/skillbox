@@ -38,7 +38,7 @@ public class CommentService {
           .user(user)
           .parentId(commentRequest.getParentId())
           .commentTime(LocalDateTime.now())
-          .text(Jsoup.parse(commentRequest.getText()).text())
+          .text(commentRequest.getText())
           .build());
       return commentResponse;
     } else {
